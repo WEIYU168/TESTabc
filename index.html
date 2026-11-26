@@ -222,8 +222,9 @@
 
   <!-- ==================== 1. 全景沉浸式主畫面（Title Hero Stage） ==================== -->
   <div id="titleHeroStage" class="relative w-full min-h-[100dvh] flex flex-col justify-between overflow-hidden select-none">
-    <!-- 全螢幕動態水墨木刻航海畫布（山水、祥雲、黑水溝巨浪、清代戎克船） -->
-    <canvas id="titleBgCanvas" class="fixed inset-0 w-full h-full block z-0"></canvas>
+    <!-- 全螢幕動漫職階封面主視覺 -->
+    <canvas id="titleBgCanvas" class="hidden" aria-hidden="true"></canvas>
+    <img src="遊戲封面_動漫職階.png" alt="清代拓荒者農夫、郎中與商販橫渡黑水溝，前往臺灣開墾" class="fixed inset-0 w-full h-full object-cover block z-0" style="object-position: center 42%;" fetchpriority="high">
 
     <!-- 古籍版畫裝飾外框（四角落回紋飾花） -->
     <div class="pointer-events-none fixed inset-2 sm:inset-4 border-2 border-[#FAF4E6]/35 rounded-2xl z-10">
@@ -3554,8 +3555,6 @@
     window.onload = () => {
       initBackgroundAssets();
       updateUnlockBadge();
-      titleRenderer = new TitleSceneRenderer('titleBgCanvas');
-      titleRenderer.draw();
 
       sceneRenderer = new SceneRenderer('sceneCanvas');
       sceneRenderer.updateAndDraw();
@@ -3565,3 +3564,4 @@
   </script>
 </body>
 </html>
+
