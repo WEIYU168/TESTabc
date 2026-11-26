@@ -1,0 +1,3567 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>黑水溝拓荒記｜清代台灣拓墾生存遊戲</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: 思源宋體 (木刻標題) & 思源黑體 (清晰內文) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-paper: #F4ECD6;
+      --bg-card: #FAF4E6;
+      --ink-black: #241C15;
+      --brick-red: #B23E2E;
+      --rice-gold: #D69622;
+      --canal-cyan: #2E6F82;
+      --paddy-green: #4E7F34;
+      --wood-brown: #643F24;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: var(--bg-paper);
+      color: var(--ink-black);
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      /* 宣紙纖維與水彩暈染質感背景 */
+      background-image:
+        radial-gradient(circle at 12% 14%, rgba(214, 150, 34, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 88% 82%, rgba(46, 111, 130, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(178, 62, 46, 0.05) 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(100, 63, 36, 0.018) 0px, rgba(100, 63, 36, 0.018) 1px, transparent 1px, transparent 4px);
+    }
+
+    .font-serif-tc {
+      font-family: 'Noto Serif TC', serif;
+    }
+
+    /* 木刻版畫外框質感 */
+    .woodblock-box {
+      background-color: var(--bg-card);
+      border: 3px solid var(--ink-black);
+      box-shadow: 4px 4px 0px var(--ink-black);
+      border-radius: 14px;
+    }
+
+    .woodblock-box-sm {
+      background-color: var(--bg-card);
+      border: 2.5px solid var(--ink-black);
+      box-shadow: 2.5px 2.5px 0px var(--ink-black);
+      border-radius: 10px;
+    }
+
+    /* 古籍錦囊卷軸外框 */
+    .scroll-box {
+      background: linear-gradient(180deg, #FDF8EC 0%, #F4E9CE 100%);
+      border: 3px solid var(--ink-black);
+      box-shadow: 0 18px 40px rgba(20, 14, 8, 0.45), inset 0 0 0 3px rgba(214, 150, 34, 0.35);
+      border-radius: 16px;
+    }
+
+    /* 遊戲立體互動按鈕 */
+    .wood-btn {
+      border: 2.5px solid var(--ink-black);
+      box-shadow: 0 4px 0 var(--ink-black);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease, filter 0.15s ease;
+      cursor: pointer;
+    }
+    .wood-btn:hover:not(:disabled) {
+      transform: translateY(-1.5px);
+      box-shadow: 0 5.5px 0 var(--ink-black);
+      filter: brightness(1.03);
+    }
+    .wood-btn:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--ink-black);
+    }
+    .wood-btn:disabled {
+      opacity: 0.52;
+      cursor: not-allowed;
+    }
+
+    /* 主畫面華麗漆紅主按鈕光澤掃描 */
+    .hero-cta-btn {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #C74634 0%, #9E2E20 100%);
+      border: 3px solid #241C15;
+      box-shadow: 0 6px 0 #241C15, 0 12px 24px rgba(36, 28, 21, 0.35);
+    }
+    .hero-cta-btn::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -75%;
+      width: 45%;
+      height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255, 243, 212, 0.38), transparent);
+      transform: rotate(22deg);
+      animation: ctaShine 3.6s ease-in-out infinite;
+    }
+    @keyframes ctaShine {
+      0%, 55% { left: -75%; }
+      100% { left: 140%; }
+    }
+
+    /* 紅色篆刻朱印樣式 */
+    .seal-stamp {
+      border: 2.5px solid var(--brick-red);
+      color: var(--brick-red);
+      font-family: 'Noto Serif TC', serif;
+      font-weight: 900;
+      transform: rotate(-3deg);
+      background: rgba(255, 250, 240, 0.9);
+      box-shadow: inset 0 0 0 1px rgba(178, 62, 46, 0.3);
+    }
+
+    /* 錦囊按鈕柔和呼吸光暈（提示可讀並補血） */
+    @keyframes knowledgePulse {
+      0%, 100% { box-shadow: 0 4px 0 var(--ink-black), 0 0 0 0 rgba(214, 150, 34, 0.65); }
+      50% { box-shadow: 0 4px 0 var(--ink-black), 0 0 0 7px rgba(214, 150, 34, 0); }
+    }
+    .knowledge-glow {
+      animation: knowledgePulse 2s infinite;
+    }
+
+    /* 主標題浮雕陰影 */
+    .hero-title-shadow {
+      text-shadow:
+        0 2px 0 #FAF4E6,
+        0 4px 0 rgba(36, 28, 21, 0.25),
+        0 10px 24px rgba(15, 28, 38, 0.28);
+    }
+
+    /* 宣紙磨砂玻璃卡片（用於主畫面覆蓋層） */
+    .parchment-glass {
+      background: linear-gradient(160deg, rgba(252, 246, 232, 0.92) 0%, rgba(242, 230, 202, 0.86) 100%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 3px solid #241C15;
+      box-shadow: 0 18px 42px rgba(14, 24, 32, 0.42), inset 0 0 0 2px rgba(214, 150, 34, 0.35);
+    }
+
+    /* 數值浮動跳出動畫 */
+    @keyframes floatDelta {
+      0% { opacity: 0; transform: translateY(8px) scale(0.7); }
+      20% { opacity: 1; transform: translateY(-4px) scale(1.18); }
+      80% { opacity: 1; transform: translateY(-18px) scale(1); }
+      100% { opacity: 0; transform: translateY(-28px) scale(0.9); }
+    }
+    .delta-float {
+      animation: floatDelta 1.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      pointer-events: none;
+    }
+
+    /* 畫面受擊震動 */
+    @keyframes screenShake {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-6px, 3px); }
+      40% { transform: translate(6px, -3px); }
+      60% { transform: translate(-4px, -2px); }
+      80% { transform: translate(4px, 2px); }
+    }
+    .shake-anim {
+      animation: screenShake 0.35s ease-in-out;
+    }
+
+    /* 卡片登場與過渡 */
+    @keyframes cardPop {
+      0% { opacity: 0; transform: scale(0.95) translateY(8px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .card-pop {
+      animation: cardPop 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* 輕微漂浮動畫 */
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .float-slow {
+      animation: gentleFloat 4.2s ease-in-out infinite;
+    }
+
+    /* 進度條平滑過渡 */
+    .stat-bar-fill {
+      transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
+    }
+
+    /* 水圳拼圖方塊旋轉過渡 */
+    .pipe-svg {
+      transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* 自訂捲軸 */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #E8DEC3;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #8C7A65;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-[100dvh] flex flex-col">
+
+  <!-- ==================== 1. 全景沉浸式主畫面（Title Hero Stage） ==================== -->
+  <div id="titleHeroStage" class="relative w-full min-h-[100dvh] flex flex-col justify-between overflow-hidden select-none">
+    <!-- 全螢幕動態水墨木刻航海畫布（山水、祥雲、黑水溝巨浪、清代戎克船） -->
+    <canvas id="titleBgCanvas" class="fixed inset-0 w-full h-full block z-0"></canvas>
+
+    <!-- 古籍版畫裝飾外框（四角落回紋飾花） -->
+    <div class="pointer-events-none fixed inset-2 sm:inset-4 border-2 border-[#FAF4E6]/35 rounded-2xl z-10">
+      <svg class="absolute -top-1 -left-1 w-10 h-10 sm:w-14 sm:h-14 text-[#F4D284]/80" viewBox="0 0 60 60" fill="none">
+        <path d="M4 56V10C4 6.686 6.686 4 10 4H56" stroke="currentColor" stroke-width="3"/>
+        <path d="M12 44V16C12 13.79 13.79 12 16 12H44" stroke="currentColor" stroke-width="2" opacity="0.75"/>
+        <rect x="18" y="18" width="8" height="8" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <svg class="absolute -top-1 -right-1 w-10 h-10 sm:w-14 sm:h-14 text-[#F4D284]/80 rotate-90" viewBox="0 0 60 60" fill="none">
+        <path d="M4 56V10C4 6.686 6.686 4 10 4H56" stroke="currentColor" stroke-width="3"/>
+        <path d="M12 44V16C12 13.79 13.79 12 16 12H44" stroke="currentColor" stroke-width="2" opacity="0.75"/>
+        <rect x="18" y="18" width="8" height="8" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <svg class="absolute -bottom-1 -left-1 w-10 h-10 sm:w-14 sm:h-14 text-[#F4D284]/80 -rotate-90" viewBox="0 0 60 60" fill="none">
+        <path d="M4 56V10C4 6.686 6.686 4 10 4H56" stroke="currentColor" stroke-width="3"/>
+        <path d="M12 44V16C12 13.79 13.79 12 16 12H44" stroke="currentColor" stroke-width="2" opacity="0.75"/>
+        <rect x="18" y="18" width="8" height="8" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <svg class="absolute -bottom-1 -right-1 w-10 h-10 sm:w-14 sm:h-14 text-[#F4D284]/80 rotate-180" viewBox="0 0 60 60" fill="none">
+        <path d="M4 56V10C4 6.686 6.686 4 10 4H56" stroke="currentColor" stroke-width="3"/>
+        <path d="M12 44V16C12 13.79 13.79 12 16 12H44" stroke="currentColor" stroke-width="2" opacity="0.75"/>
+        <rect x="18" y="18" width="8" height="8" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <!-- 主畫面頂部漂浮工具列 -->
+    <div class="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-7 pt-4 sm:pt-6 flex items-center justify-between gap-2">
+      <div class="inline-flex items-center gap-2 bg-[#241C15]/75 backdrop-blur-sm border border-[#F4D284]/60 text-[#FAF4E6] px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold shadow-lg">
+        <span class="w-2 h-2 rounded-full bg-[#D69622] animate-pulse"></span>
+        <span>康熙・乾隆年間｜清代臺灣拓墾史互動教材</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="openTeacherGuide()" class="wood-btn bg-[#FAF4E6]/95 hover:bg-white px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black text-[#241C15] flex items-center gap-1.5">
+          <span>🎓</span>
+          <span class="hidden sm:inline">教學指引</span>
+        </button>
+        <button id="titleBtnMute" onclick="toggleMute()" class="wood-btn bg-[#FAF4E6]/95 hover:bg-white px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black text-[#241C15]" title="切換音效">
+          🔊
+        </button>
+      </div>
+    </div>
+
+    <!-- 主畫面中央精緻捲軸主視覺卡片 -->
+    <div class="relative z-20 flex-1 flex items-center justify-center px-4 py-4 sm:py-6">
+      <div class="parchment-glass rounded-3xl w-full max-w-2xl p-5 sm:p-8 text-center relative card-pop">
+        <!-- 頂部古印與卷軸裝飾線 -->
+        <div class="flex items-center justify-center gap-3 mb-2 sm:mb-3">
+          <span class="h-[2px] w-10 sm:w-16 bg-gradient-to-r from-transparent to-[#643F24]"></span>
+          <div class="seal-stamp px-3 py-0.5 text-xs sm:text-sm rounded tracking-widest">臺灣史沉浸式生存體驗</div>
+          <span class="h-[2px] w-10 sm:w-16 bg-gradient-to-l from-transparent to-[#643F24]"></span>
+        </div>
+
+        <!-- 標題與書法篆印組合 -->
+        <div class="relative inline-flex items-center justify-center my-1">
+          <h1 class="font-serif-tc font-black text-4xl sm:text-5xl md:text-6xl text-[#241C15] tracking-[0.12em] hero-title-shadow">
+            黑水溝拓荒記
+          </h1>
+          <!-- 右上朱文方印 -->
+          <div class="hidden sm:flex flex-col items-center justify-center w-9 h-9 ml-2 border-2 border-[#B23E2E] bg-[#B23E2E] text-[#FAF4E6] font-serif-tc font-black text-[11px] leading-tight rounded-sm shadow-md rotate-3 float-slow">
+            <span>渡臺</span>
+            <span>開基</span>
+          </div>
+        </div>
+
+        <p class="font-serif-tc font-bold text-sm sm:text-base text-[#B23E2E] tracking-widest mt-1">
+          — 唐山過台灣，心肝結歸丸 —
+        </p>
+
+        <p class="text-xs sm:text-sm md:text-base text-[#463628] max-w-lg mx-auto mt-2.5 leading-relaxed font-medium">
+          化身清代渡海先民，橫渡九死一生的黑水溝、集資開鑿八堡水圳、抵禦颱風與瘴癘，在抉擇與歷史智慧中守住糧水與民心！
+        </p>
+
+        <!-- 四大特色徽章卡片 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 mt-5 mb-6 text-left">
+          <div class="woodblock-box-sm p-2.5 bg-[#FAF4E6]/95 flex flex-col gap-0.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">⚖️</span>
+              <span class="text-[10px] font-black text-[#B23E2E] bg-[#B23E2E]/10 px-1.5 rounded">核心機制</span>
+            </div>
+            <div class="font-black text-xs sm:text-sm text-[#241C15] mt-0.5">糧水與民心</div>
+            <div class="text-[10px] text-[#643F24] leading-snug">雙重生存生命值，歸零即刻落敗</div>
+          </div>
+
+          <div class="woodblock-box-sm p-2.5 bg-[#FFF8E2] border-[#B23E2E] flex flex-col gap-0.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">📜</span>
+              <span class="text-[10px] font-black text-white bg-[#4E7F34] px-1.5 rounded">閱讀回血</span>
+            </div>
+            <div class="font-black text-xs sm:text-sm text-[#241C15] mt-0.5">背景小知識</div>
+            <div class="text-[10px] text-[#643F24] leading-snug">師生點開解說，閱讀即恢復元氣</div>
+          </div>
+
+          <div class="woodblock-box-sm p-2.5 bg-[#FAF4E6]/95 flex flex-col gap-0.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">⏱️</span>
+              <span class="text-[10px] font-black text-[#2E6F82] bg-[#2E6F82]/10 px-1.5 rounded">互動挑戰</span>
+            </div>
+            <div class="font-black text-xs sm:text-sm text-[#241C15] mt-0.5">10秒小遊戲</div>
+            <div class="text-[10px] text-[#643F24] leading-snug">閃風浪、接水圳、救火守護庄頭</div>
+          </div>
+
+          <div class="woodblock-box-sm p-2.5 bg-[#FAF4E6]/95 flex flex-col gap-0.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">📖</span>
+              <span class="text-[10px] font-black text-[#643F24] bg-[#D69622]/25 px-1.5 rounded">收集圖鑑</span>
+            </div>
+            <div class="font-black text-xs sm:text-sm text-[#241C15] mt-0.5">10種歷史結局</div>
+            <div class="text-[10px] text-[#643F24] leading-snug">多元成敗路線，探索先民百態</div>
+          </div>
+        </div>
+
+        <!-- 主行動按鈕列 -->
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button onclick="startPrologue()" class="wood-btn hero-cta-btn text-[#FAF4E6] font-serif-tc font-black text-lg sm:text-xl px-8 py-3.5 rounded-2xl flex items-center gap-2.5 tracking-wider">
+            <span>⛵</span>
+            <span>踏上拓荒之路</span>
+          </button>
+
+          <button onclick="openEncyclopedia()" class="wood-btn bg-[#E5B043] hover:bg-[#dca22c] text-[#241C15] font-black text-sm sm:text-base px-5 py-3.5 rounded-2xl flex items-center gap-1.5">
+            <span>📜</span>
+            <span>歷史結局圖鑑</span>
+            <span id="titleUnlockBadge" class="bg-[#241C15] text-[#F4D284] px-2 py-0.5 rounded-full text-xs font-black">0/10</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主畫面底部微提示 -->
+    <div class="relative z-20 text-center pb-3 px-4">
+      <span class="inline-block bg-[#241C15]/65 backdrop-blur-sm text-[#F4ECD6]/90 text-[11px] sm:text-xs font-medium px-4 py-1 rounded-full border border-[#F4D284]/30">
+        💡 課堂小秘訣：提問時點選「📜 歷史背景錦囊」讓老師解說或學生共讀，每題可額外恢復 +5 🍚糧水與 +5 ❤️民心！
+      </span>
+    </div>
+  </div>
+
+  <!-- ==================== 2. 遊戲進行主舞台（Gameplay Shell） ==================== -->
+  <div id="gameplayShell" class="hidden w-full max-w-5xl mx-auto flex-1 flex flex-col justify-between p-2 sm:p-3 gap-2 min-h-[100dvh]">
+
+    <!-- 頂部狀態列 -->
+    <header class="woodblock-box px-3 py-2 flex flex-wrap items-center justify-between gap-2 bg-[#EFE4C8]">
+      <!-- 左側：回封面與遊戲標題 -->
+      <div class="flex items-center gap-2">
+        <button onclick="returnToTitle()" class="wood-btn bg-[#FAF4E6] hover:bg-white px-2 py-1 rounded-lg text-xs font-black flex items-center gap-1" title="返回精緻主畫面">
+          <span>🏠</span>
+          <span class="hidden sm:inline">主畫面</span>
+        </button>
+        <div>
+          <h1 class="font-serif-tc font-black text-sm sm:text-lg leading-tight tracking-wide text-[#241C15]">黑水溝拓荒記</h1>
+          <p id="stageSubtitle" class="text-[11px] sm:text-xs font-bold text-[#643F24]">序幕・整裝待發</p>
+        </div>
+      </div>
+
+      <!-- 中央：雙核心生存生命值指標（糧水 & 民心） -->
+      <div id="statsContainer" class="flex items-center gap-3 sm:gap-5 flex-1 justify-center min-w-[230px]">
+        <!-- 🍚 糧水（生存生命值 1） -->
+        <div class="relative flex-1 max-w-[180px]">
+          <div class="flex justify-between items-center text-xs sm:text-sm font-black mb-0.5">
+            <span title="生存生命值：糧食與淡水">🍚 糧水</span>
+            <span id="foodValText" class="tabular-nums">60 / 100</span>
+          </div>
+          <div class="w-full h-3.5 sm:h-4 bg-[#D8CCB0] border-2 border-[#241C15] rounded-full overflow-hidden p-0.5 shadow-inner">
+            <div id="foodBar" class="stat-bar-fill h-full bg-[#D69622] rounded-full" style="width: 60%;"></div>
+          </div>
+          <div id="foodDeltaAnchor" class="absolute -top-3 right-0 font-black text-sm sm:text-base"></div>
+        </div>
+
+        <!-- ❤️ 民心（生存生命值 2） -->
+        <div class="relative flex-1 max-w-[180px]">
+          <div class="flex justify-between items-center text-xs sm:text-sm font-black mb-0.5">
+            <span title="生存生命值：團結與士氣">❤️ 民心</span>
+            <span id="moraleValText" class="tabular-nums">60 / 100</span>
+          </div>
+          <div class="w-full h-3.5 sm:h-4 bg-[#D8CCB0] border-2 border-[#241C15] rounded-full overflow-hidden p-0.5 shadow-inner">
+            <div id="moraleBar" class="stat-bar-fill h-full bg-[#B23E2E] rounded-full" style="width: 60%;"></div>
+          </div>
+          <div id="moraleDeltaAnchor" class="absolute -top-3 right-0 font-black text-sm sm:text-base"></div>
+        </div>
+      </div>
+
+      <!-- 右側：功能快捷鈕 -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <button onclick="openBgAssetModal()" class="wood-btn bg-[#FAF4E6] hover:bg-[#FFFDF7] px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1" title="查看或載入背景圖檔">
+          <span>🖼️</span>
+          <span class="hidden md:inline">背景圖</span>
+        </button>
+
+        <button id="btnEncyclopedia" onclick="openEncyclopedia()" class="wood-btn bg-[#FAF4E6] hover:bg-[#FFFDF7] px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1" title="查看歷史結局圖鑑">
+          <span>📖</span>
+          <span class="hidden sm:inline">圖鑑</span>
+          <span id="unlockCountBadge" class="bg-[#D69622] text-[#241C15] px-1.5 py-0.2 rounded-full text-[11px] font-black border border-[#241C15]">0/10</span>
+        </button>
+
+        <button id="btnMute" onclick="toggleMute()" class="wood-btn bg-[#FAF4E6] hover:bg-[#FFFDF7] px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold" title="切換音效">
+          🔊
+        </button>
+
+        <button id="btnQuickRestart" onclick="quickRestart()" class="wood-btn bg-[#B23E2E] text-[#FAF4E6] hover:bg-[#9c3426] px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1" title="3秒一鍵快速重開">
+          <span>🔄</span>
+          <span class="hidden md:inline">重開</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 中央主舞台 -->
+    <main class="flex-1 flex flex-col lg:flex-row gap-2.5 min-h-0">
+
+      <!-- 左/上方：動態視覺聚落與航行場景視窗 -->
+      <section id="visualStageWrapper" class="woodblock-box relative overflow-hidden flex flex-col justify-between lg:w-[42%] min-h-[168px] sm:min-h-[210px] lg:min-h-0 bg-[#E6DEC8]">
+        <!-- 場景標題標籤 -->
+        <div class="absolute top-2 left-2 z-10 flex items-center gap-1.5 bg-[#FAF4E6]/92 border-2 border-[#241C15] px-2.5 py-0.5 rounded-full shadow-sm">
+          <span id="sceneBadgeIcon" class="text-sm">⛵</span>
+          <span id="sceneBadgeTitle" class="text-xs font-black tracking-wide">唐山港口・整裝待發</span>
+        </div>
+
+        <!-- 危機狀態提示標籤 -->
+        <div id="crisisPill" class="hidden absolute top-2 right-2 z-10 bg-[#B23E2E] text-white border-2 border-[#241C15] px-2.5 py-0.5 rounded-full text-xs font-black animate-pulse">
+          ⚠️ 危機狀態
+        </div>
+
+        <!-- HTML5 Canvas 動態手繪聚落與航海場景 -->
+        <canvas id="sceneCanvas" class="w-full h-full block"></canvas>
+
+        <!-- 場景底部即時狀態跑馬說明 -->
+        <div class="bg-[#241C15] text-[#F4ECD6] px-3 py-1.5 text-xs flex items-center justify-between">
+          <span id="sceneCaption" class="truncate font-medium">海風徐徐，帆船正準備橫渡險惡的黑水溝……</span>
+          <span id="roundProgressBadge" class="text-[#F4D284] font-black ml-2 shrink-0">序幕</span>
+        </div>
+      </section>
+
+      <!-- 右/下方：互動核心區（序幕選角 / 事件卡 / 10秒迷你遊戲 / 結局） -->
+      <section id="interactiveStage" class="woodblock-box flex-1 p-3 sm:p-4 flex flex-col justify-between relative overflow-hidden bg-[#FAF4E6]">
+        <!-- 內容由 JavaScript 動態渲染 -->
+      </section>
+
+    </main>
+
+    <!-- 底部工具列（角色被動＋4格實體背包） -->
+    <footer class="woodblock-box px-3 py-2 bg-[#EFE4C8] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+      <!-- 角色身分與被動天賦 -->
+      <div id="roleStatusCard" class="flex items-center gap-2.5 bg-[#FAF4E6] border-2 border-[#241C15] rounded-xl px-2.5 py-1.5 sm:max-w-[44%]">
+        <div id="roleAvatarBox" class="w-10 h-10 rounded-lg bg-[#D69622]/30 border-2 border-[#241C15] flex items-center justify-center text-2xl shrink-0">
+          🧭
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <span id="roleNameText" class="font-serif-tc font-black text-sm sm:text-base text-[#241C15]">尚未選擇身分</span>
+            <span class="text-[10px] bg-[#2E6F82] text-white px-1.5 py-0.2 rounded font-bold">天賦</span>
+          </div>
+          <p id="rolePassiveText" class="text-[11px] sm:text-xs text-[#5A4634] truncate">請先在上方選擇你的拓荒者身分</p>
+        </div>
+      </div>
+
+      <!-- 4 格實體背包道具欄 -->
+      <div class="flex items-center justify-between sm:justify-end gap-2 flex-1">
+        <span class="text-xs font-black text-[#643F24] hidden md:inline">🎒 拓荒行囊<br><span class="text-[10px] font-normal">(點擊看說明)</span></span>
+        <div id="backpackSlots" class="grid grid-cols-4 gap-1.5 sm:gap-2 flex-1 sm:flex-initial">
+          <!-- 4 個道具格由 JS 生成 -->
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== 3. 浮動訊息提示條（取代 alert） ==================== -->
+  <div id="toastBanner" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-[60] pointer-events-none opacity-0 transition-opacity duration-200">
+    <div id="toastContent" class="woodblock-box-sm bg-[#241C15] text-[#FAF4E6] px-4 py-2 text-xs sm:text-sm font-bold shadow-xl text-center max-w-[92vw]">
+    </div>
+  </div>
+
+  <!-- ==================== 4. 歷史背景錦囊彈窗（老師解說 / 閱讀補血） ==================== -->
+  <div id="knowledgeModal" class="hidden fixed inset-0 z-50 bg-[#1B140E]/75 backdrop-blur-[3px] flex items-center justify-center p-3 sm:p-5">
+    <div class="scroll-box w-full max-w-2xl max-h-[90dvh] flex flex-col overflow-hidden card-pop">
+      <!-- 頂部古卷標頭 -->
+      <div class="bg-[#241C15] text-[#FAF4E6] px-4 sm:px-5 py-3 flex items-center justify-between gap-2 border-b-2 border-[#D69622]">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="text-2xl shrink-0">📜</span>
+          <div class="min-w-0">
+            <div class="text-[11px] font-bold text-[#F4D284] tracking-wider">歷史背景錦囊・師生共讀解說</div>
+            <h2 id="knTitle" class="font-serif-tc font-black text-base sm:text-xl truncate">歷史背景標題</h2>
+          </div>
+        </div>
+        <button onclick="closeKnowledgeModal(false)" class="wood-btn bg-[#FAF4E6] text-[#241C15] px-2.5 py-1 rounded-lg text-xs font-black shrink-0">✕</button>
+      </div>
+
+      <!-- 中間閱讀與解說區（適合大螢幕投影與學生閱讀） -->
+      <div class="p-4 sm:p-6 overflow-y-auto flex flex-col gap-4">
+        <!-- 關鍵詞標籤 -->
+        <div id="knKeywords" class="flex flex-wrap items-center gap-1.5"></div>
+
+        <!-- 歷史背景正文 -->
+        <div class="bg-[#FAF4E6] border-2 border-[#241C15] rounded-2xl p-4 sm:p-5 shadow-inner">
+          <p id="knBody" class="text-sm sm:text-base md:text-lg leading-relaxed font-medium text-[#241C15]"></p>
+        </div>
+
+        <!-- 老師課堂提問與討論框 -->
+        <div class="bg-[#2E6F82]/12 border-2 border-[#2E6F82] rounded-2xl p-3.5 sm:p-4 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-[#2E6F82] text-white flex items-center justify-center text-lg shrink-0 mt-0.5">🎓</div>
+          <div>
+            <div class="text-xs font-black text-[#2E6F82] tracking-wide mb-0.5">老師解說／課堂思考引導</div>
+            <p id="knTeacherPrompt" class="text-xs sm:text-sm md:text-base font-bold text-[#241C15] leading-relaxed"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部領取生命值獎勵列 -->
+      <div class="bg-[#EFE4C8] border-t-2 border-[#241C15] px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+        <div id="knRewardStatus" class="text-xs sm:text-sm font-black text-[#4E7F34]">
+          ✨ 閱讀完成即可恢復：+5 🍚糧水、+5 ❤️民心
+        </div>
+        <button id="knClaimBtn" onclick="claimKnowledgeAndClose()" class="wood-btn bg-[#4E7F34] hover:bg-[#416c2b] text-white font-serif-tc font-black text-sm sm:text-base px-5 py-2.5 rounded-xl flex items-center gap-1.5">
+          <span>✨ 我讀懂了！恢復生命值 (+5/+5)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 5. 歷史結局圖鑑彈窗 ==================== -->
+  <div id="encyclopediaModal" class="hidden fixed inset-0 z-50 bg-[#1B140E]/75 backdrop-blur-[2px] flex items-center justify-center p-3">
+    <div class="woodblock-box w-full max-w-3xl max-h-[86dvh] flex flex-col bg-[#F4ECD6] overflow-hidden card-pop">
+      <div class="bg-[#EFE4C8] border-b-2 border-[#241C15] px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📜</span>
+          <h2 class="font-serif-tc font-black text-lg sm:text-xl">台灣拓荒歷史結局圖鑑</h2>
+          <span id="modalUnlockStats" class="bg-[#D69622] border-2 border-[#241C15] px-2 py-0.5 rounded-full text-xs font-black">0 / 10</span>
+        </div>
+        <button onclick="closeEncyclopedia()" class="wood-btn bg-[#B23E2E] text-white px-3 py-1 rounded-lg text-xs sm:text-sm font-black">✕ 關閉</button>
+      </div>
+      <div id="encyclopediaGrid" class="p-3 sm:p-4 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <!-- 圖鑑卡片由 JS 動態生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 6. 教學與玩法指引彈窗 ==================== -->
+  <div id="guideModal" class="hidden fixed inset-0 z-50 bg-[#1B140E]/75 backdrop-blur-[2px] flex items-center justify-center p-3">
+    <div class="scroll-box w-full max-w-xl max-h-[86dvh] flex flex-col overflow-hidden card-pop">
+      <div class="bg-[#241C15] text-[#FAF4E6] px-4 py-3 flex items-center justify-between border-b-2 border-[#D69622]">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🎓</span>
+          <h2 class="font-serif-tc font-black text-lg">課堂教學與遊戲玩法指引</h2>
+        </div>
+        <button onclick="closeTeacherGuide()" class="wood-btn bg-[#FAF4E6] text-[#241C15] px-2.5 py-1 rounded-lg text-xs font-black">✕ 關閉</button>
+      </div>
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-3 text-sm text-[#241C15]">
+        <div class="bg-[#FAF4E6] border-2 border-[#241C15] rounded-xl p-3">
+          <div class="font-black text-[#B23E2E] mb-1">1. 雙核心生存生命值（🍚 糧水 & ❤️ 民心）</div>
+          <p class="text-xs sm:text-sm leading-relaxed">兩項數值皆代表拓荒團隊的生命力，任一項歸零就會立刻觸發對應的歷史失敗結局！請妥善搭配角色天賦與 4 格行囊道具。</p>
+        </div>
+        <div class="bg-[#FFF8E2] border-2 border-[#4E7F34] rounded-xl p-3">
+          <div class="font-black text-[#4E7F34] mb-1">2. 全新「歷史背景錦囊」：邊讀歷史邊補血！</div>
+          <p class="text-xs sm:text-sm leading-relaxed">在每個事件提問畫面中，點選閃亮的「📜 歷史背景錦囊」即可展開大字體背景解說與課堂思考題。老師可投影帶領全班討論，學生完成閱讀後按下確認，每題皆可恢復 <strong>+5 🍚糧水與 +5 ❤️民心</strong>！</p>
+        </div>
+        <div class="bg-[#FAF4E6] border-2 border-[#241C15] rounded-xl p-3">
+          <div class="font-black text-[#2E6F82] mb-1">3. 三幕劇情 × 三大 10 秒快節奏小遊戲</div>
+          <p class="text-xs sm:text-sm leading-relaxed">每完成一幕歷史抉擇，就會進入 10 秒動作/益智挑戰（閃避黑水溝風浪、搶通水圳引水、守護聚落滅火），讓全班氣氛瞬間沸騰！</p>
+        </div>
+      </div>
+      <div class="bg-[#EFE4C8] border-t-2 border-[#241C15] px-4 py-3 flex justify-end">
+        <button onclick="closeTeacherGuide()" class="wood-btn bg-[#2E6F82] text-white font-black text-sm px-5 py-2 rounded-xl">明白了，開始體驗！</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 7. 自訂背景圖檔管理與即時載入彈窗 ==================== -->
+  <div id="bgAssetModal" class="hidden fixed inset-0 z-50 bg-[#1B140E]/75 backdrop-blur-[2px] flex items-center justify-center p-3">
+    <div class="scroll-box w-full max-w-lg flex flex-col overflow-hidden card-pop">
+      <div class="bg-[#241C15] text-[#FAF4E6] px-4 py-3 flex items-center justify-between border-b-2 border-[#D69622]">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🖼️</span>
+          <h2 class="font-serif-tc font-black text-base sm:text-lg">場景背景圖檔設定</h2>
+        </div>
+        <button onclick="closeBgAssetModal()" class="wood-btn bg-[#FAF4E6] text-[#241C15] px-2.5 py-1 rounded-lg text-xs font-black">✕ 關閉</button>
+      </div>
+      <div class="p-4 space-y-3 text-xs sm:text-sm text-[#241C15]">
+        <p class="text-[#5A4634] font-medium leading-relaxed">
+          程式會自動讀取同資料夾下的 <code class="bg-[#EFE4C8] px-1.5 py-0.5 rounded font-bold">黑水溝海浪.png</code> 與 <code class="bg-[#EFE4C8] px-1.5 py-0.5 rounded font-bold">台灣早期土地.png</code>。若您在線上預覽視窗測試，也可直接從電腦選取這兩張圖檔即時套用：
+        </p>
+
+        <!-- 黑水溝海浪.png -->
+        <div class="bg-[#FAF4E6] border-2 border-[#241C15] rounded-xl p-3 flex items-center justify-between gap-2">
+          <div>
+            <div class="font-black text-[#2E6F82]">1. 黑水溝的海（黑水溝海浪.png）</div>
+            <div id="seaAssetStatus" class="text-xs font-bold text-[#643F24] mt-0.5">載入狀態檢查中...</div>
+          </div>
+          <label class="wood-btn bg-[#2E6F82] text-white px-3 py-1.5 rounded-lg text-xs font-black cursor-pointer shrink-0">
+            📂 選擇圖檔
+            <input type="file" accept="image/*" class="hidden" onchange="handleManualBgUpload('sea', this)" />
+          </label>
+        </div>
+
+        <!-- 台灣早期土地.png -->
+        <div class="bg-[#FAF4E6] border-2 border-[#241C15] rounded-xl p-3 flex items-center justify-between gap-2">
+          <div>
+            <div class="font-black text-[#4E7F34]">2. 台灣移民土地（台灣早期土地.png）</div>
+            <div id="landAssetStatus" class="text-xs font-bold text-[#643F24] mt-0.5">載入狀態檢查中...</div>
+          </div>
+          <label class="wood-btn bg-[#4E7F34] text-white px-3 py-1.5 rounded-lg text-xs font-black cursor-pointer shrink-0">
+            📂 選擇圖檔
+            <input type="file" accept="image/*" class="hidden" onchange="handleManualBgUpload('land', this)" />
+          </label>
+        </div>
+      </div>
+      <div class="bg-[#EFE4C8] border-t-2 border-[#241C15] px-4 py-2.5 flex justify-end">
+        <button onclick="closeBgAssetModal()" class="wood-btn bg-[#241C15] text-[#FAF4E6] font-black text-xs sm:text-sm px-5 py-2 rounded-xl">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*************************************************************************
+     * 一、Web Audio API 復古 8-bit 與五聲音階音效合成器（無需外部音檔）
+     *************************************************************************/
+    class RetroSoundFX {
+      constructor() {
+        this.ctx = null;
+        this.muted = localStorage.getItem('heishuigou_muted') === 'true';
+        this.updateMuteBtn();
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      toggleMute() {
+        this.muted = !this.muted;
+        localStorage.setItem('heishuigou_muted', this.muted);
+        this.updateMuteBtn();
+        if (!this.muted) this.click();
+      }
+
+      updateMuteBtn() {
+        const icon = this.muted ? '🔇' : '🔊';
+        const btn1 = document.getElementById('btnMute');
+        const btn2 = document.getElementById('titleBtnMute');
+        if (btn1) btn1.textContent = icon;
+        if (btn2) btn2.textContent = icon;
+      }
+
+      playTone(freq, type, duration, delay = 0, vol = 0.14, slideTo = null) {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        if (slideTo) {
+          osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+        }
+
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+      }
+
+      click() {
+        this.playTone(520, 'triangle', 0.07, 0, 0.14, 680);
+      }
+
+      scrollOpen() {
+        // 展開古卷錦囊的清脆五聲音階撥弦聲
+        this.playTone(392.0, 'sine', 0.11, 0.00, 0.12); // G4
+        this.playTone(440.0, 'sine', 0.11, 0.05, 0.12); // A4
+        this.playTone(523.25, 'sine', 0.16, 0.10, 0.13); // C5
+      }
+
+      heal() {
+        // 閱讀錦囊回復生命值的溫暖和弦音效
+        this.playTone(523.25, 'triangle', 0.14, 0.00, 0.13); // C5
+        this.playTone(659.25, 'triangle', 0.14, 0.07, 0.13); // E5
+        this.playTone(783.99, 'triangle', 0.16, 0.14, 0.14); // G5
+        this.playTone(1046.5, 'sine', 0.26, 0.21, 0.15);     // C6
+      }
+
+      gain() {
+        this.playTone(523.25, 'square', 0.09, 0.00, 0.09);
+        this.playTone(659.25, 'square', 0.09, 0.07, 0.09);
+        this.playTone(783.99, 'square', 0.09, 0.14, 0.09);
+        this.playTone(1046.5, 'square', 0.18, 0.21, 0.11);
+      }
+
+      hurt() {
+        this.playTone(165, 'sawtooth', 0.25, 0, 0.16, 52);
+        this.playTone(110, 'square', 0.22, 0.05, 0.12, 45);
+      }
+
+      shield() {
+        this.playTone(380, 'triangle', 0.08, 0, 0.15, 760);
+        this.playTone(760, 'sine', 0.14, 0.06, 0.13, 920);
+      }
+
+      splash() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const bufferSize = this.ctx.sampleRate * 0.14;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 900;
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.16, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.14);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start();
+      }
+
+      tick() {
+        this.playTone(880, 'sine', 0.04, 0, 0.08);
+      }
+
+      fanfare() {
+        const notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5];
+        const times = [0, 0.1, 0.2, 0.3, 0.45, 0.58];
+        const durs  = [0.09, 0.09, 0.09, 0.13, 0.11, 0.28];
+        notes.forEach((n, i) => this.playTone(n, 'square', durs[i], times[i], 0.10));
+      }
+
+      gameover() {
+        const notes = [392.00, 369.99, 349.23, 329.63];
+        notes.forEach((n, i) => this.playTone(n, 'sawtooth', 0.22, i * 0.22, 0.11));
+      }
+    }
+
+    const sfx = new RetroSoundFX();
+
+    /*************************************************************************
+     * 二、核心遊戲資料庫（道具、角色、三幕事件與背景錦囊、10種結局圖鑑）
+     *************************************************************************/
+    const ITEMS_DB = {
+      tool: {
+        id: 'tool',
+        icon: '🔨',
+        name: '農具',
+        short: '加快開墾與築圳',
+        desc: '鋤頭與犁耙，開荒種田、挖水圳與挖井時事半功倍（可重複使用）。'
+      },
+      herb: {
+        id: 'herb',
+        icon: '🌿',
+        name: '草藥',
+        short: '治癒瘴癘與瘟疫',
+        desc: '漢方藥材包，遇到水土不服、瘧疾瘴癘時可救命（使用後消耗）。'
+      },
+      wood: {
+        id: 'wood',
+        icon: '🧱',
+        name: '木石建材',
+        short: '修船築堤抗颱風',
+        desc: '堅固木料與石塊，可自動抵銷風浪與火災傷害，也能加固水圳（使用後消耗）。'
+      },
+      permit: {
+        id: 'permit',
+        icon: '📜',
+        name: '渡台照',
+        short: '官府合法通行證',
+        desc: '清廷核發的渡海與開墾憑證，應對水師查緝與官府交涉的王牌（可重複使用）。'
+      }
+    };
+
+    const ROLES_DB = [
+      {
+        id: 'farmer',
+        icon: '👨‍🌾',
+        name: '勤奮農夫',
+        passiveTitle: '五穀豐登',
+        passiveDesc: '開墾與種田事件額外獲得 🍚 糧水 +10',
+        startItem: 'tool',
+        quote: '「只要肯流汗，荒埔也能變良田！」'
+      },
+      {
+        id: 'physician',
+        icon: '🩺',
+        name: '江湖郎中',
+        passiveTitle: '妙手回春',
+        passiveDesc: '遇到疾病／瘴癘事件時自動減免一半損失',
+        startItem: 'herb',
+        quote: '「南台灣瘴癘雖猛，有我藥箱在別怕！」'
+      },
+      {
+        id: 'merchant',
+        icon: '🧮',
+        name: '精明商販',
+        passiveTitle: '八面玲瓏',
+        passiveDesc: '事件獲得道具時，額外多獲得 1 樣隨機道具',
+        startItem: 'permit',
+        quote: '「手握渡台照，人脈物資通通難不倒！」'
+      }
+    ];
+
+    const ACTS_DATA = [
+      {
+        actNum: 1,
+        actTitle: '第一幕：闖過黑水溝',
+        miniGameType: 'dodge',
+        events: [
+          {
+            id: 'e1_1',
+            icon: '🚢',
+            title: '水師盤查渡台禁令',
+            desc: '海面突然出現清廷水師巡邏船，大喊：「停船受檢！嚴禁偷渡！」',
+            bgKnowledge: {
+              title: '清初「渡台禁令」與羅漢腳現象',
+              keywords: ['渡台禁令', '渡台照', '單身男子', '羅漢腳'],
+              body: '康熙二十三年（1684年）清廷將台灣納入版圖後，擔心台灣成為反清基地，頒布嚴格的「渡台禁令」：人民想來台必須先向官府申請「渡台照」，且嚴禁攜帶父母、妻兒同行。許多繳不起申請費的窮苦百姓，只能冒險搭「客頭」的偷渡船橫渡台灣海峽。',
+              teacherPrompt: '想一想：因為規定「不能帶家人來台灣」，當時台灣社會出現了哪一種特殊的人口性別比例現象？（提示：單身無業男子常被稱為什麼？）'
+            },
+            left: {
+              reqItem: 'permit',
+              consumeItem: false,
+              labelWithItem: '出示【📜 渡台照】從容通關',
+              labelNoItem: '冒充漁民硬闖（缺少 渡台照）',
+              withItemOutcome: { food: 0, morale: 12, text: '官兵驗明正身立刻放行，全船士氣大振！' },
+              noItemOutcome: { food: -15, morale: -15, text: '口音露餡被搜走盤纏，差點被押回唐山！' }
+            },
+            right: {
+              label: '趁夜霧繞行黑水溝暗流',
+              outcome: { food: -10, morale: 5, text: '驚險甩開官船，但繞遠路多耗了不少糧水。' }
+            },
+            trivia: '【📜 歷史小知識】清初頒布渡台禁令，須申請渡台照且禁攜家眷。'
+          },
+          {
+            id: 'e1_2',
+            icon: '🪣',
+            title: '淡水桶破裂大危機',
+            desc: '巨浪猛拍船身，船艙裡的淡水木桶被撞裂，寶貴淡水嘩啦啦外流！',
+            bgKnowledge: {
+              title: '為何台灣海峽被稱為「黑水溝」？',
+              keywords: ['黑水溝', '澎湖水道', '洋流湍急', '淡水補給'],
+              body: '「黑水溝」指的是福建與台灣之間（特別是澎湖群島與台灣本島之間）的海域。這裡海底地形深邃、黑潮支流奔騰湍急，海水在陽光折射下呈現深墨黑色。早期木造戎克帆船全靠季風航行，一旦遇到無風或逆風，在海上漂流十幾天，淡水與乾糧耗盡往往是最致命的危機。',
+              teacherPrompt: '討論看看：早期帆船沒有引擎，先民通常會選在一年中的哪個季節（吹什麼風向）從福建渡海來台灣比較順利？'
+            },
+            left: {
+              reqItem: 'wood',
+              consumeItem: true,
+              labelWithItem: '用【🧱 木石建材】箍桶補漏',
+              labelNoItem: '拿破布死命塞洞（缺少 建材）',
+              withItemOutcome: { food: 5, morale: 10, text: '消耗建材完美修好水桶，還接了場及時雨！' },
+              noItemOutcome: { food: -20, morale: -5, text: '淡水流失大半，大夥渴得喉嚨快冒煙！' }
+            },
+            right: {
+              label: '嚴格配給每人每天半碗水',
+              outcome: { food: -5, morale: -15, text: '省下了寶貴淡水，但船艙裡怨聲載道。' }
+            },
+            trivia: '【📜 歷史小知識】黑水溝海流湍急，缺水與暈船是移民最大殺手。'
+          },
+          {
+            id: 'e1_3',
+            icon: '🪵',
+            title: '漂流樟木與落難鄉親',
+            desc: '前方海面漂來一根巨大樟木，上面還趴著一名揮手求救的落難鄉親！',
+            bgKnowledge: {
+              title: '諺語「六死三留一回頭」的血淚史',
+              keywords: ['六死三留一回頭', '海難', '客頭船', '互助精神'],
+              body: '早期流傳一句台灣俗諺：「唐山過台灣，心肝結歸丸；十去，六死、三留、一回頭。」意思是指十個人渡海來台，有六個人不幸葬身海底或病死，只有三個人能成功留下來開墾，還有一個人受不了苦而逃回大陸。面對凶險大海，同鄉之間互相救援、同舟共濟，成為早期移民社會最重要的生存信念。',
+              teacherPrompt: '換作是你站在船頭，糧水已經很有限了，你會選擇冒險救起落難同鄉，還是優先保住全船人的食物？為什麼？'
+            },
+            left: {
+              label: '停船救人並合力撈起樟木',
+              outcome: { food: -5, morale: 15, gainItem: 'wood', text: '雖多一張嘴吃飯，但救回人命並獲得建材！' }
+            },
+            right: {
+              label: '順風加速優先保存糧水',
+              outcome: { food: 10, morale: -15, text: '順風省下糧水，但眾人對見死不救心生愧疚。' }
+            },
+            trivia: '【📜 歷史小知識】「六死三留一回頭」道盡早期渡海來台的九死一生。'
+          }
+        ]
+      },
+      {
+        actNum: 2,
+        actTitle: '第二幕：荒地求生與開圳',
+        miniGameType: 'canal',
+        events: [
+          {
+            id: 'e2_1',
+            icon: '🐗',
+            title: '荒埔開墾與野豬突襲',
+            desc: '登陸後眼前全是比人還高的荒草，草叢裡還衝出幾隻兇猛台灣野豬！',
+            bgKnowledge: {
+              title: '「合股開墾」與墾照制度',
+              keywords: ['合股開墾', '墾照', '墾首與佃農', '荒埔拓墾'],
+              body: '清代台灣西部平原原本遍布高草與灌木叢（稱為「荒埔」），還有梅花鹿與台灣野豬出沒。一個人力量單薄很難開墾，因此先民常採用「合股開墾」制度：由有財力的「墾首」向官府申請「墾照」，再招募農民（佃農）合力砍草整地、築起木柵防禦野獸，收成後再按比例分租。',
+              teacherPrompt: '觀察一下：台灣很多地名帶有「股」（例如五股、七股）或「結」（例如五結），你知道這些地名和當年的拓墾方式有什麼關係嗎？'
+            },
+            left: {
+              reqItem: 'tool',
+              consumeItem: false,
+              isFarming: true,
+              labelWithItem: '揮舞【🔨 農具】開荒闢地建柵欄',
+              labelNoItem: '徒手拔草搬石頭（缺少 農具）',
+              withItemOutcome: { food: 15, morale: 10, text: '工具齊全效率翻倍，順利開出第一片田地！' },
+              noItemOutcome: { food: -5, morale: -10, text: '雙手磨破皮進度緩慢，還被野豬追著跑！' }
+            },
+            right: {
+              isFarming: true,
+              label: '放火燒荒驅趕野豬再播種',
+              outcome: { food: 10, morale: -5, text: '草木灰肥沃了土地，但濃煙嗆得大家直咳嗽。' }
+            },
+            trivia: '【📜 歷史小知識】清代拓墾常採「合股開墾」，集資向官府申請墾照。'
+          },
+          {
+            id: 'e2_2',
+            icon: '🌊',
+            title: '集資開鑿八堡大圳',
+            desc: '看天吃飯常鬧旱災，庄頭決定引大溪灌溉，但急流太猛築堤頻頻沖毀！',
+            bgKnowledge: {
+              title: '清代三大水圳與「石笱」水利智慧',
+              keywords: ['八堡圳', '瑠公圳', '曹公圳', '石笱引水'],
+              body: '早期台灣農田多是「看天田」，沒下雨就鬧飢荒。康熙年間，施世榜集資開鑿彰化「八堡圳」，引濁水溪灌溉彰化平原。由於濁水溪水流湍急，先民發明了用竹籠裝滿大石頭的「石笱（ㄍㄡˇ）」，排成堤壩導引溪水入圳。水圳完工後稻米產量大增，讓台灣贏得「台灣米倉」的美名！',
+              teacherPrompt: '請說出清代台灣北、中、南著名的三大水圳名稱（提示：台北瑠公圳、彰化八堡圳，那高雄鳳山一帶的是哪一條呢？）。'
+            },
+            left: {
+              reqItem: 'wood',
+              consumeItem: true,
+              isFarming: true,
+              labelWithItem: '用【🧱 木石建材】編石笱擋水',
+              labelNoItem: '全村輪班挑土築堤（缺少 建材）',
+              withItemOutcome: { food: 20, morale: 15, text: '消耗建材築成穩固石笱，溪水順利引入水圳！' },
+              noItemOutcome: { food: 10, morale: -15, text: '水圳勉強挖通，但村民累壞了士氣大跌。' }
+            },
+            right: {
+              label: '先挖小水溝應急不冒險築壩',
+              outcome: { food: 5, morale: 5, gainItem: 'tool', text: '穩紮穩打保住體力，鐵匠還順手打了新農具！' }
+            },
+            trivia: '【📜 歷史小知識】彰化八堡圳用「石笱」導引濁水溪，成就台灣米倉。'
+          },
+          {
+            id: 'e2_3',
+            icon: '🌀',
+            title: '夏秋猛烈西北颱來襲',
+            desc: '天空突然烏雲密布、狂風暴雨，強颱橫掃庄頭，草寮屋頂快被掀飛了！',
+            bgKnowledge: {
+              title: '刺竹圍牆與土角厝的抗風智慧',
+              keywords: ['西北颱', '刺竹圍', '土角厝', '因地制宜'],
+              body: '台灣位處西太平洋颱風路徑上，夏秋兩季常有狂風暴雨，與中國大陸華南內陸氣候大不相同。先民在聚落周圍種植密密麻麻帶刺的「刺竹」作為天然防風林（這也是許多地名叫做「竹圍」的由來），並就地取材用泥土混合稻草曬乾製成土磚，蓋出冬暖夏涼的「土角厝」。',
+              teacherPrompt: '想一想：聚落周圍種植一圈高大帶刺的「刺竹」，除了可以擋颱風，還有什麼重要的防禦功能呢？'
+            },
+            left: {
+              reqItem: 'wood',
+              consumeItem: true,
+              labelWithItem: '用【🧱 木石建材】加固屋梁水門',
+              labelNoItem: '全家死命拉住屋柱（缺少 建材）',
+              withItemOutcome: { food: -5, morale: 15, text: '消耗建材頂住強風，全庄平安度過颱風夜！' },
+              noItemOutcome: { food: -15, morale: -15, text: '草寮倒了好幾間，剛長高的稻苗也被淹爛！' }
+            },
+            right: {
+              label: '放棄草寮全員躲進山洞避難',
+              outcome: { food: -15, morale: 5, text: '留得青山在不怕沒柴燒，人人都平安無事。' }
+            },
+            trivia: '【📜 歷史小知識】台灣夏季多颱風豪雨，先民常種刺竹防風並建土角厝。'
+          },
+          {
+            id: 'e2_4',
+            icon: '🤒',
+            title: '水土不服與瘴癘蔓延',
+            desc: '濕熱氣候引發可怕瘴癘（瘧疾），半數村民發高燒打冷顫，無法下田！',
+            bgKnowledge: {
+              title: '「瘴癘之地」與漢醫草藥文化',
+              keywords: ['瘴癘', '瘧疾', '青草藥', '保生大帝'],
+              body: '清代台灣未開發前森林茂密、氣候濕熱，蚊蟲孳生，許多剛從福建、廣東渡海而來的先民水土不服，感染瘧疾（俗稱「打擺子」）或霍亂，當時文獻常稱台灣為「瘴癘之地」。先民除了從家鄉帶來中藥材，也向原住民學習認識台灣本地草藥，並祭祀醫神「保生大帝」祈求平安。',
+              teacherPrompt: '結合自然與健康課知識：現在我們知道古代所謂的「瘴癘（瘧疾）」，主要是透過哪一種昆蟲叮咬傳播的？如何預防？'
+            },
+            left: {
+              reqItem: 'herb',
+              consumeItem: true,
+              isDisease: true,
+              labelWithItem: '熬煮【🌿 草藥】湯藥分送全庄',
+              labelNoItem: '求神問卜喝香灰水（缺少 草藥）',
+              withItemOutcome: { food: 0, morale: 15, text: '消耗草藥及時退燒，大夥很快恢復元氣！' },
+              noItemOutcome: { food: -15, morale: -20, text: '延誤治療病情加重，農田荒廢了好一陣子！' }
+            },
+            right: {
+              isDisease: true,
+              label: '隔離病患並燒開水清理水溝',
+              outcome: { food: -10, morale: -5, text: '衛生改善止住了疫情，展現冷靜的防疫智慧。' }
+            },
+            trivia: '【📜 歷史小知識】早期台灣被稱「瘴癘之地」，瘧疾與霍亂威脅甚鉅。'
+          }
+        ]
+      },
+      {
+        actNum: 3,
+        actTitle: '第三幕：守住我們的庄頭',
+        miniGameType: 'defend',
+        events: [
+          {
+            id: 'e3_1',
+            icon: '🗿',
+            title: '番界立碑與土地交涉',
+            desc: '拓墾範圍靠近原住民獵場，平埔族頭目帶隊前來交涉地界與水權！',
+            bgKnowledge: {
+              title: '「土牛紅線」與原漢土地契約',
+              keywords: ['土牛紅線', '番界碑', '割地換水', '平埔族群'],
+              body: '隨著漢人開墾面積擴大，逐漸進入平埔族與高山原住民的生活領域。清廷為了避免衝突，曾沿著山腳挖掘深溝、堆起形狀像臥牛的土堆（稱為「土牛」），並在地圖上畫紅線區隔漢番界線。不過民間交流非常頻繁，漢人常向平埔族承租土地（繳納「番大租」），甚至出現「割地換水」的合作契約！',
+              teacherPrompt: '歷史思考：什麼叫做「割地換水」？平埔族與漢人移民各自拿出什麼資源交換，達成雙贏的合作？'
+            },
+            left: {
+              label: '誠意協商立碑並共享水圳水源',
+              outcome: { food: -5, morale: 15, gainItem: 'herb', text: '雙方立石為界和平共處，族人還贈送珍貴草藥！' }
+            },
+            right: {
+              reqItem: 'permit',
+              consumeItem: false,
+              labelWithItem: '亮出【📜 渡台照】與官府墾照施壓',
+              labelNoItem: '強行越界開墾不理會警告',
+              withItemOutcome: { food: 10, morale: -15, text: '強佔了邊界土地，但雙方結下心結衝突不斷。' },
+              noItemOutcome: { food: -10, morale: -20, text: '遭到武力警告被迫退回，田地荒廢民心惶惶！' }
+            },
+            trivia: '【📜 歷史小知識】清廷曾設「土牛紅線」區隔漢番，但漢番通婚交融頻繁。'
+          },
+          {
+            id: 'e3_2',
+            icon: '🏮',
+            title: '祖籍紛爭與水源糾紛',
+            desc: '鄰庄與本庄因灌溉水門開關起爭執，雙方抄起扁擔農具眼看就要械鬥！',
+            bgKnowledge: {
+              title: '從「分類械鬥」到同舟一命的在地認同',
+              keywords: ['分類械鬥', '閩粵械鬥', '漳泉拚', '土地公信仰'],
+              body: '清代台灣移民來自福建泉州、漳州與廣東客家庄，因為語言習慣不同，加上爭奪有限的耕地與灌溉水源，常發生大規模的「分類械鬥」（如漳泉械鬥、閩粵械鬥）。後來地方仕紳與廟宇長老出面協調，訂定共同祭祀與輪流用水的公約，各族群逐漸放下成見，產生「同是台灣人」的在地認同。',
+              teacherPrompt: '討論看看：當不同族群為了搶水源或土地吵架時，透過「地方公約」與「武力械鬥」解決，對村莊發展有什麼不同影響？'
+            },
+            left: {
+              label: '請地方仕紳到土地公廟公斷',
+              outcome: { food: -5, morale: 15, text: '訂立「輪流放水規約」，化干戈為玉帛！' }
+            },
+            right: {
+              label: '帶頭堵死水門護住自家稻田',
+              outcome: { food: 15, morale: -20, text: '保住了自家收成，但結下世仇天天提心吊膽。' }
+            },
+            trivia: '【📜 歷史小知識】清代台灣常因祖籍或水源發生「分類械鬥」，後漸融合。'
+          },
+          {
+            id: 'e3_3',
+            icon: '☀️',
+            title: '百年大旱與搶水危機',
+            desc: '連續三個月沒下雨，水圳快見底了！庄裡有人想偷挖缺口私引溪水！',
+            bgKnowledge: {
+              title: '水圳「水甲」制度與公平輪灌規約',
+              keywords: ['水甲制度', '水規約', '巡水員', '共同體'],
+              body: '水圳建好後，如何公平分配水源是一門大學問！先民成立了水利管理組織，將農田劃分為若干「水甲」，推舉公正的「水甲頭」與巡水員，嚴格規定上游與下游農田輪流放水的時辰，並刻石立下《水規約》禁碑，嚴禁任何人半夜偷挖水門。這套制度展現了台灣早期民間高度的自治精神。',
+              teacherPrompt: '生活連結：在缺水的枯水期，公平的「輪流配水制度」為什麼比「各自搶水」更能讓整個庄頭活下去？'
+            },
+            left: {
+              reqItem: 'tool',
+              consumeItem: false,
+              isFarming: true,
+              labelWithItem: '拿【🔨 農具】號召全庄深挖水井',
+              labelNoItem: '實施抽籤輪灌嚴禁私搶水源',
+              withItemOutcome: { food: 15, morale: 15, text: '眾志成城挖出甘甜井水，全庄一起撐過大旱！' },
+              noItemOutcome: { food: -5, morale: 10, text: '制度公平讓大家心服口服，咬牙撐過枯水期。' }
+            },
+            right: {
+              label: '各憑本事搶水不管鄰居死活',
+              outcome: { food: 10, morale: -25, text: '水圳被挖得亂七八糟，庄頭徹底分裂人心渙散！' }
+            },
+            trivia: '【📜 歷史小知識】台灣水圳常設「水甲」制度與水規約，維持公平灌溉。'
+          }
+        ]
+      }
+    ];
+
+    const ENDINGS_DB = [
+      {
+        id: 'fail_sea_food',
+        type: 'fail',
+        icon: '🐟',
+        title: '還沒看到台灣就餵魚了',
+        conditionHint: '第一幕糧水耗盡',
+        desc: '黑水溝的狂風巨浪無情吞噬了糧水，船還沒看見澎湖與鹿耳門，大夥就已飢渴難耐，成為魚群的點心……'
+      },
+      {
+        id: 'fail_sea_morale',
+        type: 'fail',
+        icon: '⛵',
+        title: '船上內鬨原路遣返',
+        conditionHint: '第一幕民心歸零',
+        desc: '渡海過程接連失策，船艙裡吵成一團，水手乾脆調轉船頭帆布，灰頭土臉地把大家載回唐山老家！'
+      },
+      {
+        id: 'fail_land_food',
+        type: 'fail',
+        icon: '🐗',
+        title: '被野豬與瘴癘擊敗的拓荒者',
+        conditionHint: '第二幕糧水耗盡',
+        desc: '荒草還沒除完、水圳還沒挖通，糧食就見底了。餓著肚子面對野豬與高燒，你只好含淚撤出荒埔。'
+      },
+      {
+        id: 'fail_land_morale',
+        type: 'fail',
+        icon: '🏚️',
+        title: '鳥獸散的荒廢草寮',
+        conditionHint: '第二幕民心歸零',
+        desc: '無止盡的苦力、颱風與疾病徹底磨光了夥伴的熱情。某天清晨醒來，夥伴們全打包袱投奔別庄去了！'
+      },
+      {
+        id: 'fail_village_food',
+        type: 'fail',
+        icon: '🏜️',
+        title: '水圳乾涸的空城庄頭',
+        conditionHint: '第三幕糧水耗盡',
+        desc: '眼看聚落就要成形，卻在最後關頭遭遇嚴重缺糧危機，稻穗枯黃顆粒無收，庄頭被迫棄庄逃荒。'
+      },
+      {
+        id: 'fail_village_morale',
+        type: 'fail',
+        icon: '⚔️',
+        title: '械鬥火拼的悲劇庄頭',
+        conditionHint: '第三幕民心歸零',
+        desc: '水權糾紛與族群猜忌點燃了怒火，一場分類械鬥燒毀了辛苦蓋起的土角厝與土地公廟，令人不勝唏噓。'
+      },
+      {
+        id: 'win_legend',
+        type: 'win',
+        icon: '👑',
+        title: '唐山過台灣一代宗師',
+        conditionHint: '通關且糧水≥75、民心≥75',
+        desc: '你兼顧了水利農耕與族群和諧！不僅將荒埔變成萬頃良田，更讓各路先民團結一心，名留台灣地方志！'
+      },
+      {
+        id: 'win_engineer',
+        type: 'win',
+        icon: '🌊',
+        title: '水利工程師傳奇',
+        conditionHint: '通關且糧水≥80',
+        desc: '宛如施世榜與郭錫瑠再世！你修築的水圳縱橫交錯、水車日夜轉動，打造出遠近馳名的「台灣大米倉」！'
+      },
+      {
+        id: 'win_harmony',
+        type: 'win',
+        icon: '🤝',
+        title: '族群共榮的模範庄頭',
+        conditionHint: '通關且民心≥80',
+        desc: '你以智慧化解了漳泉矛盾與原漢衝突，土地公廟香火鼎盛，不同族群在這裡通婚互助，成為最溫暖的家園！'
+      },
+      {
+        id: 'win_pioneer',
+        type: 'win',
+        icon: '🌾',
+        title: '腳踏實地的開基先民',
+        conditionHint: '成功度過三幕考驗',
+        desc: '雖然一路上跌跌撞撞、歷經風浪颱風與乾旱，但你咬緊牙關撐了過來，成功在台灣土地上扎下了根！'
+      }
+    ];
+
+    /*************************************************************************
+     * 三、遊戲狀態管理
+     *************************************************************************/
+    const state = {
+      screen: 'title', // title | prologue | event | result | minigame | ending
+      food: 60,
+      morale: 60,
+      role: null,
+      inventory: [],
+      prologueSelectedExtras: [],
+      readKnowledgeIds: [],
+      activeKnowledgeEventId: null,
+      actIndex: 0,
+      eventIndex: 0,
+      lastOutcome: null,
+      currentEnding: null,
+      sceneFlags: {
+        canalBuilt: false,
+        villageStable: false,
+        isDrought: false,
+        isPlague: false,
+        isStorm: false
+      },
+      unlockedEndings: JSON.parse(localStorage.getItem('heishuigou_endings_v1') || '[]'),
+      activeMiniGameCleanup: null
+    };
+
+    function saveUnlockedEnding(endingId) {
+      if (!state.unlockedEndings.includes(endingId)) {
+        state.unlockedEndings.push(endingId);
+        localStorage.setItem('heishuigou_endings_v1', JSON.stringify(state.unlockedEndings));
+        updateUnlockBadge();
+        return true;
+      }
+      return false;
+    }
+
+    function updateUnlockBadge() {
+      const text = `${state.unlockedEndings.length}/${ENDINGS_DB.length}`;
+      const badge1 = document.getElementById('unlockCountBadge');
+      const badge2 = document.getElementById('titleUnlockBadge');
+      if (badge1) badge1.textContent = text;
+      if (badge2) badge2.textContent = text;
+    }
+
+    let toastTimer = null;
+    function showToast(msg, duration = 2200) {
+      const banner = document.getElementById('toastBanner');
+      const content = document.getElementById('toastContent');
+      if (!banner || !content) return;
+      content.textContent = msg;
+      banner.classList.remove('opacity-0');
+      banner.classList.add('opacity-100');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        banner.classList.remove('opacity-100');
+        banner.classList.add('opacity-0');
+      }, duration);
+    }
+
+    /*************************************************************************
+     * 四、數值變動與感官回饋（進度條動畫、浮動數字、畫面閃光震動）
+     *************************************************************************/
+    function applyStatChanges(foodDelta = 0, moraleDelta = 0, options = {}) {
+      const prevFood = state.food;
+      const prevMorale = state.morale;
+
+      state.food = Math.max(0, Math.min(100, state.food + foodDelta));
+      state.morale = Math.max(0, Math.min(100, state.morale + moraleDelta));
+
+      const actualFoodDiff = state.food - prevFood;
+      const actualMoraleDiff = state.morale - prevMorale;
+
+      renderTopStats();
+
+      if (foodDelta !== 0) {
+        spawnDeltaPopup('foodDeltaAnchor', foodDelta);
+      }
+      if (moraleDelta !== 0) {
+        spawnDeltaPopup('moraleDeltaAnchor', moraleDelta);
+      }
+
+      if (options.isHeal) {
+        if (!options.silent) sfx.heal();
+        triggerScreenEffect('heal');
+      } else if (foodDelta < 0 || moraleDelta < 0) {
+        if (!options.silent) sfx.hurt();
+        triggerScreenEffect('hurt');
+      } else if (foodDelta > 0 || moraleDelta > 0) {
+        if (!options.silent) sfx.gain();
+        triggerScreenEffect('gain');
+      }
+
+      return { actualFoodDiff, actualMoraleDiff };
+    }
+
+    function spawnDeltaPopup(anchorId, delta) {
+      const anchor = document.getElementById(anchorId);
+      if (!anchor) return;
+      const el = document.createElement('div');
+      const isPos = delta > 0;
+      el.className = `delta-float font-black text-sm sm:text-base px-1.5 py-0.5 rounded border border-[#241C15] shadow-sm ${
+        isPos ? 'bg-[#4E7F34] text-white' : 'bg-[#B23E2E] text-white'
+      }`;
+      el.textContent = isPos ? `+${delta}` : `${delta}`;
+      anchor.innerHTML = '';
+      anchor.appendChild(el);
+    }
+
+    function triggerScreenEffect(type) {
+      const shell = document.getElementById('gameplayShell');
+      if (type === 'hurt') {
+        if (shell) {
+          shell.classList.remove('shake-anim');
+          void shell.offsetWidth;
+          shell.classList.add('shake-anim');
+        }
+        if (sceneRenderer) sceneRenderer.flash('#B23E2E', 0.35);
+      } else if (type === 'gain') {
+        if (sceneRenderer) sceneRenderer.flash('#D69622', 0.25);
+      } else if (type === 'shield') {
+        if (sceneRenderer) sceneRenderer.flash('#2E6F82', 0.3);
+      } else if (type === 'heal') {
+        if (sceneRenderer) sceneRenderer.flash('#4E7F34', 0.32);
+      }
+    }
+
+    function renderTopStats() {
+      const foodText = document.getElementById('foodValText');
+      const moraleText = document.getElementById('moraleValText');
+      const foodBar = document.getElementById('foodBar');
+      const moraleBar = document.getElementById('moraleBar');
+      if (!foodText || !moraleText || !foodBar || !moraleBar) return;
+
+      foodText.textContent = `${state.food} / 100`;
+      moraleText.textContent = `${state.morale} / 100`;
+      foodBar.style.width = `${state.food}%`;
+      moraleBar.style.width = `${state.morale}%`;
+
+      foodBar.style.backgroundColor = state.food <= 25 ? '#B23E2E' : '#D69622';
+      moraleBar.style.backgroundColor = state.morale <= 25 ? '#7D1919' : '#B23E2E';
+    }
+
+    function renderFooter() {
+      const avatarBox = document.getElementById('roleAvatarBox');
+      const nameText = document.getElementById('roleNameText');
+      const passiveText = document.getElementById('rolePassiveText');
+      if (!avatarBox || !nameText || !passiveText) return;
+
+      if (state.role) {
+        avatarBox.textContent = state.role.icon;
+        nameText.textContent = state.role.name;
+        passiveText.textContent = `${state.role.passiveTitle}：${state.role.passiveDesc}`;
+      } else {
+        avatarBox.textContent = '🧭';
+        nameText.textContent = '尚未選擇身分';
+        passiveText.textContent = '請先挑選拓荒者角色與行囊物資';
+      }
+
+      const slotsContainer = document.getElementById('backpackSlots');
+      if (!slotsContainer) return;
+      slotsContainer.innerHTML = '';
+      for (let i = 0; i < 4; i++) {
+        const itemId = state.inventory[i];
+        const slot = document.createElement('button');
+        slot.type = 'button';
+        if (itemId && ITEMS_DB[itemId]) {
+          const item = ITEMS_DB[itemId];
+          slot.className = 'wood-btn bg-[#FAF4E6] hover:bg-[#FFFDF7] h-11 sm:h-12 px-2 rounded-xl flex flex-col items-center justify-center relative';
+          slot.innerHTML = `
+            <span class="text-lg sm:text-xl leading-none">${item.icon}</span>
+            <span class="text-[10px] sm:text-[11px] font-black mt-0.5 truncate max-w-[54px]">${item.name}</span>
+          `;
+          slot.onclick = () => {
+            sfx.click();
+            showToast(`${item.icon}【${item.name}】${item.desc}`, 2800);
+          };
+        } else {
+          slot.className = 'border-2 border-dashed border-[#9C8B74] bg-[#E5D9BE]/60 h-11 sm:h-12 px-2 rounded-xl flex flex-col items-center justify-center text-[#9C8B74]';
+          slot.innerHTML = `<span class="text-[11px] font-bold">空位</span>`;
+          slot.onclick = () => showToast('背包空位（最多可攜帶 4 樣拓荒物資）', 1600);
+        }
+        slotsContainer.appendChild(slot);
+      }
+    }
+
+    function addItemToBackpack(itemId, allowMerchantBonus = true) {
+      const item = ITEMS_DB[itemId];
+      if (!item) return '';
+      let msg = '';
+      if (state.inventory.length < 4) {
+        state.inventory.push(itemId);
+        msg += `獲得 ${item.icon}${item.name}！`;
+      } else {
+        applyStatChanges(8, 0, { silent: true });
+        msg += `背包已滿，${item.icon}${item.name}轉化為 +8 🍚糧水！`;
+      }
+
+      if (allowMerchantBonus && state.role && state.role.id === 'merchant') {
+        const keys = Object.keys(ITEMS_DB);
+        const bonusKey = keys[Math.floor(Math.random() * keys.length)];
+        const bonusItem = ITEMS_DB[bonusKey];
+        if (state.inventory.length < 4) {
+          state.inventory.push(bonusKey);
+          msg += `（商販天賦再得 ${bonusItem.icon}${bonusItem.name}！）`;
+        } else {
+          applyStatChanges(6, 0, { silent: true });
+          msg += `（商販天賦轉化 +6 🍚糧水！）`;
+        }
+      }
+      renderFooter();
+      return msg;
+    }
+
+    function consumeOneItem(itemId) {
+      const idx = state.inventory.indexOf(itemId);
+      if (idx !== -1) {
+        state.inventory.splice(idx, 1);
+        renderFooter();
+        return true;
+      }
+      return false;
+    }
+
+    /*************************************************************************
+     * 五、主畫面全景水墨木刻動態畫布（TitleSceneRenderer）
+     *************************************************************************/
+    class TitleSceneRenderer {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.time = 0;
+        this.mouseX = 0.5;
+        this.mouseY = 0.5;
+        this.particles = Array.from({ length: 28 }, () => ({
+          x: Math.random(),
+          y: Math.random(),
+          r: 1.2 + Math.random() * 2.4,
+          speedY: 0.0005 + Math.random() * 0.001,
+          phase: Math.random() * Math.PI * 2
+        }));
+
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => {
+          this.mouseX = e.clientX / Math.max(1, window.innerWidth);
+          this.mouseY = e.clientY / Math.max(1, window.innerHeight);
+        });
+      }
+
+      resize() {
+        if (!this.canvas) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+        this.canvas.width = Math.floor(this.w * dpr);
+        this.canvas.height = Math.floor(this.h * dpr);
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      draw() {
+        if (state.screen === 'title') {
+          this.time += 0.018;
+          const ctx = this.ctx;
+          const w = this.w || window.innerWidth;
+          const h = this.h || window.innerHeight;
+          const px = (this.mouseX - 0.5) * 24;
+          const py = (this.mouseY - 0.5) * 14;
+
+          ctx.clearRect(0, 0, w, h);
+
+          // 1. 破曉宣紙水墨漸層天空
+          const sky = ctx.createLinearGradient(0, 0, 0, h * 0.72);
+          sky.addColorStop(0, '#1D3944');
+          sky.addColorStop(0.35, '#4A6E72');
+          sky.addColorStop(0.70, '#D9BE8C');
+          sky.addColorStop(1, '#F2E4C4');
+          ctx.fillStyle = sky;
+          ctx.fillRect(0, 0, w, h);
+
+          // 2. 東方破曉朝日與暖金光暈
+          const sunX = w * 0.74 - px * 0.4;
+          const sunY = h * 0.30 - py * 0.4;
+          const sunGlow = ctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, Math.min(w, h) * 0.32);
+          sunGlow.addColorStop(0, 'rgba(255, 246, 214, 0.96)');
+          sunGlow.addColorStop(0.22, 'rgba(244, 210, 132, 0.65)');
+          sunGlow.addColorStop(0.55, 'rgba(214, 150, 34, 0.18)');
+          sunGlow.addColorStop(1, 'rgba(214, 150, 34, 0)');
+          ctx.fillStyle = sunGlow;
+          ctx.beginPath();
+          ctx.arc(sunX, sunY, Math.min(w, h) * 0.32, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 3. 漂浮水墨流雲
+          ctx.fillStyle = 'rgba(250, 244, 230, 0.22)';
+          for (let c = 0; c < 4; c++) {
+            const cx = ((w * (0.15 + c * 0.26) + this.time * (8 + c * 2)) % (w + 260)) - 130;
+            const cy = h * (0.16 + (c % 2) * 0.11);
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 90 + c * 15, 16, 0, 0, Math.PI * 2);
+            ctx.ellipse(cx + 45, cy - 6, 65, 14, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // 4. 遠方臺灣玉山與中央山脈水墨層疊剪影
+          ctx.fillStyle = 'rgba(34, 72, 79, 0.55)';
+          ctx.beginPath();
+          ctx.moveTo(0, h * 0.68);
+          ctx.lineTo(w * 0.14 - px * 0.5, h * 0.48);
+          ctx.lineTo(w * 0.32 - px * 0.5, h * 0.58);
+          ctx.lineTo(w * 0.54 - px * 0.5, h * 0.36);
+          ctx.lineTo(w * 0.72 - px * 0.5, h * 0.52);
+          ctx.lineTo(w * 0.88 - px * 0.5, h * 0.40);
+          ctx.lineTo(w, h * 0.55);
+          ctx.lineTo(w, h * 0.72);
+          ctx.lineTo(0, h * 0.72);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(25, 54, 62, 0.78)';
+          ctx.beginPath();
+          ctx.moveTo(0, h * 0.70);
+          ctx.lineTo(w * 0.22 - px * 0.8, h * 0.52);
+          ctx.lineTo(w * 0.44 - px * 0.8, h * 0.62);
+          ctx.lineTo(w * 0.68 - px * 0.8, h * 0.44);
+          ctx.lineTo(w * 0.90 - px * 0.8, h * 0.58);
+          ctx.lineTo(w, h * 0.50);
+          ctx.lineTo(w, h * 0.74);
+          ctx.lineTo(0, h * 0.74);
+          ctx.closePath();
+          ctx.fill();
+
+          // 5. 黑水溝後層巨浪
+          this.drawTitleWave(ctx, w, h, h * 0.67, '#16333F', 11, 0.016, 1.3);
+
+          // 6. 清代渡海戎克大帆船（隨浪起伏）
+          const shipX = w * 0.20 + px * 1.1;
+          const bobY = Math.sin(this.time * 2.0) * 7;
+          const tilt = Math.sin(this.time * 1.6) * 0.06;
+          const shipY = h * 0.68 + bobY;
+
+          ctx.save();
+          ctx.translate(shipX, shipY);
+          ctx.rotate(tilt);
+
+          // 主桅杆與三角紅旗
+          ctx.strokeStyle = '#241C15';
+          ctx.lineWidth = 3.2;
+          ctx.beginPath();
+          ctx.moveTo(-6, -12);
+          ctx.lineTo(-6, -96);
+          ctx.stroke();
+
+          ctx.fillStyle = '#B23E2E';
+          ctx.beginPath();
+          ctx.moveTo(-6, -96);
+          ctx.lineTo(22, -89 + Math.sin(this.time * 5) * 3);
+          ctx.lineTo(-6, -82);
+          ctx.closePath();
+          ctx.fill();
+
+          // 竹篾硬帆
+          ctx.fillStyle = '#E2A634';
+          ctx.beginPath();
+          ctx.moveTo(-3, -84);
+          ctx.quadraticCurveTo(44, -58, 34, -18);
+          ctx.lineTo(-3, -18);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.lineWidth = 1.4;
+          for (let sy = -70; sy <= -30; sy += 15) {
+            ctx.beginPath();
+            ctx.moveTo(-3, sy);
+            ctx.lineTo(35, sy + 3);
+            ctx.stroke();
+          }
+
+          // 船身
+          ctx.fillStyle = '#5E391F';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(-62, -12);
+          ctx.lineTo(66, -18);
+          ctx.lineTo(44, 18);
+          ctx.lineTo(-42, 18);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // 船眼與船尾紅燈籠
+          ctx.fillStyle = '#FAF4E6';
+          ctx.beginPath();
+          ctx.arc(40, -4, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#241C15';
+          ctx.beginPath();
+          ctx.arc(41.5, -4, 2.2, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#B23E2E';
+          ctx.beginPath();
+          ctx.arc(-52, -25, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // 7. 黑水溝前層木刻波濤
+          this.drawTitleWave(ctx, w, h, h * 0.75, '#1D4352', 14, 0.022, 1.9);
+          this.drawTitleWave(ctx, w, h, h * 0.85, '#0F252F', 10, 0.028, 1.5);
+
+          // 8. 漂浮暖金微光粒子
+          this.particles.forEach((p) => {
+            p.y -= p.speedY;
+            if (p.y < 0) p.y = 1;
+            const x = p.x * w + Math.sin(this.time * 1.5 + p.phase) * 18;
+            const y = p.y * h;
+            const alpha = 0.25 + 0.35 * Math.sin(this.time * 2 + p.phase);
+            ctx.fillStyle = `rgba(255, 236, 179, ${alpha})`;
+            ctx.beginPath();
+            ctx.arc(x, y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        }
+
+        requestAnimationFrame(() => this.draw());
+      }
+
+      drawTitleWave(ctx, w, h, baseY, color, amp, freq, speed) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        for (let x = 0; x <= w + 16; x += 14) {
+          const y = baseY + Math.sin(x * freq + this.time * speed) * amp;
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(w, h);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    /*************************************************************************
+     * 外部背景圖檔載入器（黑水溝海浪.png & 台灣早期土地.png）
+     *************************************************************************/
+    const BG_ASSETS = {
+      sea: { fileName: '黑水溝海浪.png', img: new Image(), loaded: false },
+      land: { fileName: '台灣早期土地.png', img: new Image(), loaded: false }
+    };
+
+    function initBackgroundAssets() {
+      Object.keys(BG_ASSETS).forEach(key => {
+        const asset = BG_ASSETS[key];
+        asset.img.onload = () => {
+          asset.loaded = asset.img.naturalWidth > 0;
+          updateBgAssetStatusUI();
+        };
+        asset.img.onerror = () => {
+          asset.loaded = false;
+          updateBgAssetStatusUI();
+        };
+        asset.img.src = asset.fileName;
+      });
+    }
+
+    // 保持圖片比例完整鋪滿畫布（等同 CSS background-size: cover）
+    function drawImageCover(ctx, img, x, y, w, h) {
+      const iw = img.naturalWidth || img.width;
+      const ih = img.naturalHeight || img.height;
+      if (!iw || !ih) return;
+      const scale = Math.max(w / iw, h / ih);
+      const nw = iw * scale;
+      const nh = ih * scale;
+      const nx = x + (w - nw) / 2;
+      const ny = y + (h - nh) / 2;
+      ctx.drawImage(img, nx, ny, nw, nh);
+    }
+
+    // 黑水溝海浪向下無縫捲動繪製（用於第一幕 10 秒躲避風浪小遊戲）
+    function drawScrollingSeaImage(ctx, img, w, h, scrollPx) {
+      const iw = img.naturalWidth || img.width;
+      const ih = img.naturalHeight || img.height;
+      if (!iw || !ih) return;
+      const scale = Math.max(w / iw, h / ih);
+      const nw = iw * scale;
+      const nh = ih * scale;
+      const nx = (w - nw) / 2;
+      const offsetY = scrollPx % nh;
+      ctx.drawImage(img, nx, offsetY - nh, nw, nh);
+      ctx.drawImage(img, nx, offsetY, nw, nh);
+      if (offsetY + nh < h) {
+        ctx.drawImage(img, nx, offsetY + nh, nw, nh);
+      }
+    }
+
+    function openBgAssetModal() {
+      sfx.click();
+      updateBgAssetStatusUI();
+      document.getElementById('bgAssetModal').classList.remove('hidden');
+    }
+
+    function closeBgAssetModal() {
+      sfx.click();
+      document.getElementById('bgAssetModal').classList.add('hidden');
+    }
+
+    function updateBgAssetStatusUI() {
+      const seaEl = document.getElementById('seaAssetStatus');
+      const landEl = document.getElementById('landAssetStatus');
+      if (seaEl) {
+        seaEl.textContent = BG_ASSETS.sea.loaded
+          ? `✅ 已成功載入（${BG_ASSETS.sea.img.naturalWidth}×${BG_ASSETS.sea.img.naturalHeight}）`
+          : `⚠️ 尚未偵測到同目錄下的 ${BG_ASSETS.sea.fileName}（目前使用預設海浪）`;
+        seaEl.className = `text-xs font-bold mt-0.5 ${BG_ASSETS.sea.loaded ? 'text-[#4E7F34]' : 'text-[#B23E2E]'}`;
+      }
+      if (landEl) {
+        landEl.textContent = BG_ASSETS.land.loaded
+          ? `✅ 已成功載入（${BG_ASSETS.land.img.naturalWidth}×${BG_ASSETS.land.img.naturalHeight}）`
+          : `⚠️ 尚未偵測到同目錄下的 ${BG_ASSETS.land.fileName}（目前使用預設手繪場景）`;
+        landEl.className = `text-xs font-bold mt-0.5 ${BG_ASSETS.land.loaded ? 'text-[#4E7F34]' : 'text-[#B23E2E]'}`;
+      }
+    }
+
+    function handleManualBgUpload(key, inputEl) {
+      const file = inputEl.files && inputEl.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const asset = BG_ASSETS[key];
+        asset.img = new Image();
+        asset.img.onload = () => {
+          asset.loaded = true;
+          updateBgAssetStatusUI();
+          sfx.gain();
+          showToast(`✅ 已成功套用 ${file.name}！`, 2200);
+        };
+        asset.img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /*************************************************************************
+     * 六、遊戲內動態聚落與航行場景畫布（SceneRenderer - 升級版）
+     *************************************************************************/
+    class SceneRenderer {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.time = 0;
+        this.flashColor = null;
+        this.flashAlpha = 0;
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        if (!this.canvas || state.screen === 'title') return;
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        if (rect.width < 10 || rect.height < 10) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        this.canvas.width = Math.max(300, Math.floor(rect.width * dpr));
+        this.canvas.height = Math.max(150, Math.floor(rect.height * dpr));
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        this.w = rect.width;
+        this.h = rect.height;
+      }
+
+      flash(color, alpha = 0.35) {
+        this.flashColor = color;
+        this.flashAlpha = alpha;
+      }
+
+      updateAndDraw() {
+        if (state.screen !== 'title') {
+          this.time += 0.025;
+          const ctx = this.ctx;
+          const w = this.w || 400;
+          const h = this.h || 200;
+
+          ctx.clearRect(0, 0, w, h);
+
+          const isSeaPhase = (state.screen === 'prologue' ||
+            (state.actIndex === 0 && state.screen !== 'ending'));
+
+          if (isSeaPhase) {
+            this.drawVoyageScene(ctx, w, h);
+          } else {
+            this.drawSettlementScene(ctx, w, h);
+          }
+
+          if (this.flashAlpha > 0.01 && this.flashColor) {
+            ctx.fillStyle = this.flashColor;
+            ctx.globalAlpha = this.flashAlpha;
+            ctx.fillRect(0, 0, w, h);
+            ctx.globalAlpha = 1;
+            this.flashAlpha *= 0.88;
+          }
+        }
+        requestAnimationFrame(() => this.updateAndDraw());
+      }
+
+      drawVoyageScene(ctx, w, h) {
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.65);
+        skyGrad.addColorStop(0, '#B5C9C8');
+        skyGrad.addColorStop(0.55, '#F2E5C6');
+        skyGrad.addColorStop(1, '#DEC79D');
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, w, h);
+
+        // 暖日光暈
+        const sunGrad = ctx.createRadialGradient(w * 0.78, h * 0.26, 4, w * 0.78, h * 0.26, 46);
+        sunGrad.addColorStop(0, 'rgba(255, 245, 210, 0.95)');
+        sunGrad.addColorStop(0.45, 'rgba(214, 150, 34, 0.35)');
+        sunGrad.addColorStop(1, 'rgba(214, 150, 34, 0)');
+        ctx.fillStyle = sunGrad;
+        ctx.beginPath();
+        ctx.arc(w * 0.78, h * 0.26, 46, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 遠方台灣島嶼雙層山脈
+        const mountainShift = state.actIndex === 0 ? (state.eventIndex * 20) : 0;
+        ctx.fillStyle = 'rgba(46, 111, 130, 0.42)';
+        ctx.beginPath();
+        ctx.moveTo(w * 0.62 - mountainShift, h * 0.58);
+        ctx.quadraticCurveTo(w * 0.77 - mountainShift, h * 0.28, w * 0.92 - mountainShift, h * 0.54);
+        ctx.lineTo(w, h * 0.58);
+        ctx.closePath();
+        ctx.fill();
+
+        // 海鷗
+        ctx.strokeStyle = '#241C15';
+        ctx.lineWidth = 1.6;
+        for (let i = 0; i < 3; i++) {
+          const bx = ((w * 0.2 + i * 52 + this.time * 14) % (w + 40)) - 20;
+          const by = h * 0.22 + Math.sin(this.time * 2 + i) * 5 + i * 8;
+          ctx.beginPath();
+          ctx.moveTo(bx - 6, by);
+          ctx.quadraticCurveTo(bx - 3, by - 4, bx, by);
+          ctx.quadraticCurveTo(bx + 3, by - 4, bx + 6, by);
+          ctx.stroke();
+        }
+
+        this.drawWaveLayer(ctx, w, h, h * 0.56, '#1D3E4C', 7, 0.03, 1.4);
+
+        // 清代戎克帆船
+        const shipX = w * 0.42;
+        const bobY = Math.sin(this.time * 2.2) * 5;
+        const tilt = Math.sin(this.time * 1.8) * 0.07;
+        const shipY = h * 0.57 + bobY;
+
+        ctx.save();
+        ctx.translate(shipX, shipY);
+        ctx.rotate(tilt);
+
+        // 桅杆與紅旗
+        ctx.strokeStyle = '#241C15';
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        ctx.moveTo(-4, -10);
+        ctx.lineTo(-4, -68);
+        ctx.stroke();
+
+        ctx.fillStyle = '#B23E2E';
+        ctx.beginPath();
+        ctx.moveTo(-4, -68);
+        ctx.lineTo(14, -63 + Math.sin(this.time * 5) * 2);
+        ctx.lineTo(-4, -59);
+        ctx.closePath();
+        ctx.fill();
+
+        // 竹篾帆
+        ctx.fillStyle = '#E0A432';
+        ctx.beginPath();
+        ctx.moveTo(-2, -60);
+        ctx.quadraticCurveTo(30, -42, 24, -15);
+        ctx.lineTo(-2, -15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.lineWidth = 1.2;
+        for (let sy = -50; sy <= -24; sy += 12) {
+          ctx.beginPath();
+          ctx.moveTo(-2, sy);
+          ctx.lineTo(24, sy + 2);
+          ctx.stroke();
+        }
+
+        // 船身
+        ctx.fillStyle = '#643F24';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(-44, -9);
+        ctx.lineTo(46, -13);
+        ctx.lineTo(31, 13);
+        ctx.lineTo(-30, 13);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 船眼
+        ctx.fillStyle = '#FAF4E6';
+        ctx.beginPath();
+        ctx.arc(28, -3, 3.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#241C15';
+        ctx.beginPath();
+        ctx.arc(29, -3, 1.7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 船尾紅燈籠
+        ctx.fillStyle = '#B23E2E';
+        ctx.beginPath();
+        ctx.arc(-36, -18, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        this.drawWaveLayer(ctx, w, h, h * 0.66, '#285666', 9, 0.04, 2.2);
+        this.drawWaveLayer(ctx, w, h, h * 0.78, '#142F3A', 6, 0.05, 1.8);
+      }
+
+      drawWaveLayer(ctx, w, h, baseY, color, amp, freq, speed) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        for (let x = 0; x <= w + 10; x += 10) {
+          const y = baseY + Math.sin(x * freq + this.time * speed) * amp;
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(w, h);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      drawSettlementScene(ctx, w, h) {
+        const flags = state.sceneFlags;
+        const hasCustomLand = BG_ASSETS.land.loaded && BG_ASSETS.land.img.naturalWidth > 0;
+
+        if (hasCustomLand) {
+          // 使用「台灣早期土地.png」作為台灣移民土地底圖
+          drawImageCover(ctx, BG_ASSETS.land.img, 0, 0, w, h);
+
+          // 依氣候危機狀態加上柔和氛圍濾鏡
+          if (flags.isStorm) {
+            ctx.fillStyle = 'rgba(28, 38, 52, 0.42)';
+            ctx.fillRect(0, 0, w, h);
+          } else if (flags.isDrought) {
+            ctx.fillStyle = 'rgba(218, 152, 48, 0.24)';
+            ctx.fillRect(0, 0, w, h);
+          }
+        } else {
+          // 備援手繪背景（當尚未放置 台灣早期土地.png 時顯示）
+          // 1. 天空
+          const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.5);
+          if (flags.isStorm) {
+            skyGrad.addColorStop(0, '#3C4757');
+            skyGrad.addColorStop(1, '#687689');
+          } else if (flags.isDrought) {
+            skyGrad.addColorStop(0, '#E3BA76');
+            skyGrad.addColorStop(1, '#F7E7C4');
+          } else {
+            skyGrad.addColorStop(0, '#8CC0CE');
+            skyGrad.addColorStop(1, '#F5EEDB');
+          }
+          ctx.fillStyle = skyGrad;
+          ctx.fillRect(0, 0, w, h);
+
+          // 2. 遠方中央山脈
+          ctx.fillStyle = flags.isStorm ? '#36414C' : '#5E8A94';
+          ctx.beginPath();
+          ctx.moveTo(0, h * 0.48);
+          ctx.lineTo(w * 0.18, h * 0.24);
+          ctx.lineTo(w * 0.36, h * 0.42);
+          ctx.lineTo(w * 0.58, h * 0.19);
+          ctx.lineTo(w * 0.80, h * 0.37);
+          ctx.lineTo(w, h * 0.23);
+          ctx.lineTo(w, h * 0.52);
+          ctx.lineTo(0, h * 0.52);
+          ctx.closePath();
+          ctx.fill();
+
+          // 3. 大地底色
+          let landColor = '#B49A6B';
+          if (flags.isDrought) landColor = '#D4B475';
+          else if (flags.canalBuilt) landColor = '#7BA652';
+          ctx.fillStyle = landColor;
+          ctx.fillRect(0, h * 0.46, w, h * 0.54);
+        }
+
+        // 乾旱龜裂
+        if (flags.isDrought) {
+          ctx.strokeStyle = '#7A5B32';
+          ctx.lineWidth = 1.5;
+          for (let cx = 30; cx < w - 20; cx += 65) {
+            ctx.beginPath();
+            ctx.moveTo(cx, h * 0.65);
+            ctx.lineTo(cx + 12, h * 0.72);
+            ctx.lineTo(cx + 4, h * 0.82);
+            ctx.moveTo(cx + 12, h * 0.72);
+            ctx.lineTo(cx + 24, h * 0.75);
+            ctx.stroke();
+          }
+        }
+
+        // 4. 水圳、水車與稻田
+        if (flags.canalBuilt && !flags.isDrought) {
+          ctx.strokeStyle = '#2E6F82';
+          ctx.lineWidth = 13;
+          ctx.beginPath();
+          ctx.moveTo(0, h * 0.62);
+          ctx.bezierCurveTo(w * 0.35, h * 0.58, w * 0.65, h * 0.72, w, h * 0.65);
+          ctx.stroke();
+
+          ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+          ctx.lineWidth = 2;
+          const flowOffset = (this.time * 28) % 36;
+          for (let fx = -36 + flowOffset; fx < w; fx += 36) {
+            ctx.beginPath();
+            ctx.moveTo(fx, h * 0.63);
+            ctx.lineTo(fx + 14, h * 0.63);
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = '#4E7F34';
+          ctx.fillRect(w * 0.06, h * 0.72, w * 0.38, h * 0.20);
+          ctx.strokeStyle = '#241C15';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(w * 0.06, h * 0.72, w * 0.38, h * 0.20);
+
+          const sway = Math.sin(this.time * 3) * 2.5;
+          ctx.strokeStyle = '#E5B043';
+          for (let rx = w * 0.09; rx < w * 0.42; rx += 14) {
+            for (let ry = h * 0.76; ry < h * 0.90; ry += 12) {
+              ctx.beginPath();
+              ctx.moveTo(rx, ry);
+              ctx.lineTo(rx + sway, ry - 7);
+              ctx.stroke();
+            }
+          }
+
+          // 水車
+          const wx = w * 0.48;
+          const wy = h * 0.60;
+          ctx.save();
+          ctx.translate(wx, wy);
+          ctx.rotate(this.time * 1.6);
+          ctx.strokeStyle = '#643F24';
+          ctx.lineWidth = 2.3;
+          ctx.beginPath();
+          ctx.arc(0, 0, 14, 0, Math.PI * 2);
+          ctx.stroke();
+          for (let a = 0; a < Math.PI; a += Math.PI / 3) {
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(a) * -16, Math.sin(a) * -16);
+            ctx.lineTo(Math.cos(a) * 16, Math.sin(a) * 16);
+            ctx.stroke();
+          }
+          ctx.restore();
+        } else if (!flags.canalBuilt && !hasCustomLand) {
+          ctx.strokeStyle = '#635C36';
+          ctx.lineWidth = 1.8;
+          for (let gx = 20; gx < w - 20; gx += 38) {
+            const gy = h * 0.68 + ((gx * 7) % 30);
+            ctx.beginPath();
+            ctx.moveTo(gx, gy);
+            ctx.lineTo(gx - 5, gy - 10);
+            ctx.moveTo(gx, gy);
+            ctx.lineTo(gx + 2, gy - 12);
+            ctx.moveTo(gx, gy);
+            ctx.lineTo(gx + 7, gy - 9);
+            ctx.stroke();
+          }
+        }
+
+        // 5. 刺竹防風林（建築進化後出現在屋後）
+        if (flags.villageStable) {
+          const bambooSway = Math.sin(this.time * (flags.isStorm ? 7 : 2)) * (flags.isStorm ? 6 : 2);
+          ctx.strokeStyle = '#3B6E30';
+          ctx.lineWidth = 2.2;
+          for (let bx = w * 0.56; bx <= w * 0.94; bx += 18) {
+            ctx.beginPath();
+            ctx.moveTo(bx, h * 0.54);
+            ctx.quadraticCurveTo(bx + bambooSway * 0.5, h * 0.42, bx + bambooSway, h * 0.34);
+            ctx.stroke();
+          }
+        }
+
+        // 6. 建築物進化：破草寮 -> 紅瓦土角厝 + 土地公廟
+        const hx = w * 0.61;
+        const hy = h * 0.50;
+        if (flags.villageStable) {
+          ctx.fillStyle = '#E8D6B5';
+          ctx.strokeStyle = '#241C15';
+          ctx.lineWidth = 2;
+          ctx.fillRect(hx, hy, 48, 28);
+          ctx.strokeRect(hx, hy, 48, 28);
+
+          // 磚紅屋頂
+          ctx.fillStyle = '#B23E2E';
+          ctx.beginPath();
+          ctx.moveTo(hx - 7, hy);
+          ctx.lineTo(hx + 24, hy - 17);
+          ctx.lineTo(hx + 55, hy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // 土地公小廟
+          const tx = w * 0.80;
+          const ty = h * 0.52;
+          ctx.fillStyle = '#FAF4E6';
+          ctx.fillRect(tx, ty, 30, 24);
+          ctx.strokeRect(tx, ty, 30, 24);
+          ctx.fillStyle = '#D69622';
+          ctx.beginPath();
+          ctx.moveTo(tx - 6, ty);
+          ctx.lineTo(tx + 15, ty - 14);
+          ctx.lineTo(tx + 36, ty);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // 紅燈籠
+          ctx.fillStyle = '#B23E2E';
+          ctx.beginPath();
+          ctx.arc(tx + 4, ty + 6, 3, 0, Math.PI * 2);
+          ctx.arc(tx + 26, ty + 6, 3, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#9C7A54';
+          ctx.strokeStyle = '#241C15';
+          ctx.lineWidth = 2;
+          ctx.fillRect(hx + 4, hy + 4, 36, 22);
+          ctx.strokeRect(hx + 4, hy + 4, 36, 22);
+
+          ctx.fillStyle = '#C7A86B';
+          ctx.beginPath();
+          ctx.moveTo(hx - 2, hy + 5);
+          ctx.lineTo(hx + 22, hy - 10);
+          ctx.lineTo(hx + 46, hy + 5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        // 7. 拓荒小人
+        const villagerCount = flags.villageStable ? 3 : 2;
+        for (let v = 0; v < villagerCount; v++) {
+          const vx = ((w * (0.2 + v * 0.25) + Math.sin(this.time + v * 2) * 24));
+          const vy = h * 0.83 + (v % 2) * 6;
+          ctx.fillStyle = v === 0 ? '#2E6F82' : (v === 1 ? '#B23E2E' : '#D69622');
+          ctx.beginPath();
+          ctx.arc(vx, vy - 5, 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#E8C589';
+          ctx.strokeStyle = '#241C15';
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.moveTo(vx - 8, vy - 11);
+          ctx.lineTo(vx, vy - 17);
+          ctx.lineTo(vx + 8, vy - 11);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          if (flags.isPlague) {
+            ctx.fillStyle = 'rgba(104, 159, 56, 0.75)';
+            const smokeY = vy - 22 - ((this.time * 15 + v * 7) % 12);
+            ctx.beginPath();
+            ctx.arc(vx + Math.sin(this.time * 4 + v) * 3, smokeY, 4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // 8. 颱風斜雨特效
+        if (flags.isStorm) {
+          ctx.strokeStyle = 'rgba(220, 235, 245, 0.72)';
+          ctx.lineWidth = 1.5;
+          for (let r = 0; r < 28; r++) {
+            const rx = ((r * 37 + this.time * 180) % w);
+            const ry = ((r * 29 + this.time * 260) % h);
+            ctx.beginPath();
+            ctx.moveTo(rx, ry);
+            ctx.lineTo(rx - 8, ry + 14);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    let titleRenderer = null;
+    let sceneRenderer = null;
+
+    function updateSceneStatusUI() {
+      const badgeIcon = document.getElementById('sceneBadgeIcon');
+      const badgeTitle = document.getElementById('sceneBadgeTitle');
+      const caption = document.getElementById('sceneCaption');
+      const roundBadge = document.getElementById('roundProgressBadge');
+      const crisisPill = document.getElementById('crisisPill');
+      const stageSub = document.getElementById('stageSubtitle');
+
+      const flags = state.sceneFlags;
+      const hasCrisis = flags.isDrought || flags.isPlague || flags.isStorm;
+      crisisPill.classList.toggle('hidden', !hasCrisis);
+      if (hasCrisis) {
+        crisisPill.textContent = flags.isStorm ? '🌀 強颱警戒' : (flags.isPlague ? '🤢 瘴癘蔓延' : '☀️ 乾旱缺水');
+      }
+
+      if (state.screen === 'title' || state.screen === 'prologue') {
+        badgeIcon.textContent = '⛵';
+        badgeTitle.textContent = '唐山港口・整裝待發';
+        caption.textContent = '海風徐徐，帆船正準備橫渡險惡的黑水溝……';
+        roundBadge.textContent = '序幕準備';
+        stageSub.textContent = '序幕・選擇身分與物資';
+      } else if (state.actIndex === 0) {
+        badgeIcon.textContent = '🌊';
+        badgeTitle.textContent = '黑水溝・驚濤駭浪';
+        caption.textContent = '烏黑海流暗藏礁石與水師巡船，緊盯航向！';
+        const total = ACTS_DATA[0].events.length;
+        roundBadge.textContent = state.screen === 'minigame' ? '小遊戲考驗' : `第 1 幕 (${state.eventIndex + 1}/${total})`;
+        stageSub.textContent = '第一幕：闖過黑水溝';
+      } else if (state.actIndex === 1) {
+        badgeIcon.textContent = flags.canalBuilt ? '🌾' : '⛺';
+        badgeTitle.textContent = flags.canalBuilt ? '水圳通水・綠野稻香' : '荒埔草寮・開疆闢土';
+        caption.textContent = flags.canalBuilt
+          ? '清涼溪水湧入水圳，水車轉動，稻苗一片翠綠！'
+          : '初抵荒地雜草叢生，急需開墾農田與興修水利！';
+        const total = ACTS_DATA[1].events.length;
+        roundBadge.textContent = state.screen === 'minigame' ? '小遊戲考驗' : `第 2 幕 (${state.eventIndex + 1}/${total})`;
+        stageSub.textContent = '第二幕：荒地求生與開圳';
+      } else {
+        badgeIcon.textContent = '🏮';
+        badgeTitle.textContent = '安居庄頭・土角厝與土地公';
+        caption.textContent = '土角厝與土地公廟立起，考驗族群合作與守護決心！';
+        const total = ACTS_DATA[2].events.length;
+        roundBadge.textContent = state.screen === 'minigame' ? '小遊戲考驗' : `第 3 幕 (${state.eventIndex + 1}/${total})`;
+        stageSub.textContent = '第三幕：守住我們的庄頭';
+      }
+    }
+
+    /*************************************************************************
+     * 七、畫面切換與核心路由（全螢幕主畫面 <-> 遊戲主舞台）
+     *************************************************************************/
+    function switchShellVisibility() {
+      const titleStage = document.getElementById('titleHeroStage');
+      const gameShell = document.getElementById('gameplayShell');
+      if (state.screen === 'title') {
+        titleStage.classList.remove('hidden');
+        gameShell.classList.add('hidden');
+        requestAnimationFrame(() => titleRenderer && titleRenderer.resize());
+      } else {
+        titleStage.classList.add('hidden');
+        gameShell.classList.remove('hidden');
+        requestAnimationFrame(() => sceneRenderer && sceneRenderer.resize());
+      }
+    }
+
+    function returnToTitle() {
+      sfx.click();
+      if (state.activeMiniGameCleanup) {
+        state.activeMiniGameCleanup();
+        state.activeMiniGameCleanup = null;
+      }
+      state.screen = 'title';
+      updateUnlockBadge();
+      switchShellVisibility();
+    }
+
+    function renderStage() {
+      if (state.activeMiniGameCleanup) {
+        state.activeMiniGameCleanup();
+        state.activeMiniGameCleanup = null;
+      }
+
+      switchShellVisibility();
+      if (state.screen === 'title') return;
+
+      updateSceneStatusUI();
+      renderTopStats();
+      renderFooter();
+
+      const stage = document.getElementById('interactiveStage');
+      stage.innerHTML = '';
+
+      switch (state.screen) {
+        case 'prologue':
+          renderPrologueScreen(stage);
+          break;
+        case 'event':
+          renderEventScreen(stage);
+          break;
+        case 'result':
+          renderResultScreen(stage);
+          break;
+        case 'minigame':
+          renderMiniGameScreen(stage);
+          break;
+        case 'ending':
+          renderEndingScreen(stage);
+          break;
+      }
+    }
+
+    /*************************************************************************
+     * 八、序幕選角、事件卡抉擇與「歷史背景錦囊（閱讀補血）」
+     *************************************************************************/
+    function startPrologue() {
+      sfx.click();
+      state.screen = 'prologue';
+      state.food = 60;
+      state.morale = 60;
+      state.role = ROLES_DB[0];
+      state.prologueSelectedExtras = [];
+      state.readKnowledgeIds = [];
+      state.actIndex = 0;
+      state.eventIndex = 0;
+      state.sceneFlags = {
+        canalBuilt: false,
+        villageStable: false,
+        isDrought: false,
+        isPlague: false,
+        isStorm: false
+      };
+      syncPrologueInventory();
+      renderStage();
+    }
+
+    function syncPrologueInventory() {
+      state.inventory = [];
+      if (state.role) state.inventory.push(state.role.startItem);
+      state.prologueSelectedExtras.forEach(id => {
+        if (state.inventory.length < 4) state.inventory.push(id);
+      });
+    }
+
+    function selectPrologueRole(roleId) {
+      sfx.click();
+      state.role = ROLES_DB.find(r => r.id === roleId);
+      syncPrologueInventory();
+      renderStage();
+    }
+
+    function togglePrologueExtra(itemId) {
+      sfx.click();
+      const idx = state.prologueSelectedExtras.indexOf(itemId);
+      if (idx !== -1) {
+        state.prologueSelectedExtras.splice(idx, 1);
+      } else {
+        if (state.prologueSelectedExtras.length >= 2) {
+          state.prologueSelectedExtras.shift();
+        }
+        state.prologueSelectedExtras.push(itemId);
+      }
+      syncPrologueInventory();
+      renderStage();
+    }
+
+    function confirmDeparture() {
+      if (!state.role || state.prologueSelectedExtras.length < 2) {
+        showToast('請先挑選 2 樣出發物資放入行囊！');
+        return;
+      }
+      sfx.fanfare();
+      state.screen = 'event';
+      state.actIndex = 0;
+      state.eventIndex = 0;
+      renderStage();
+    }
+
+    function renderPrologueScreen(container) {
+      const canDepart = state.role && state.prologueSelectedExtras.length === 2;
+      container.innerHTML = `
+        <div class="flex-1 flex flex-col justify-between gap-2.5 card-pop">
+          <!-- 步驟一：三選一角色 -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-serif-tc font-black text-sm sm:text-base text-[#241C15]">① 選擇你的拓荒者身分（自帶 1 件初始道具）</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              ${ROLES_DB.map(r => {
+                const selected = state.role && state.role.id === r.id;
+                const startItem = ITEMS_DB[r.startItem];
+                return `
+                  <button onclick="selectPrologueRole('${r.id}')" class="wood-btn text-left p-2.5 rounded-xl flex flex-col justify-between ${
+                    selected ? 'bg-[#D69622]/35 ring-2 ring-[#B23E2E]' : 'bg-[#EFE4C8]/75 hover:bg-[#EFE4C8]'
+                  }">
+                    <div class="flex items-center justify-between">
+                      <span class="text-2xl">${r.icon}</span>
+                      <span class="text-[11px] font-black bg-[#FAF4E6] border border-[#241C15] px-1.5 py-0.5 rounded">
+                        自帶 ${startItem.icon}${startItem.name}
+                      </span>
+                    </div>
+                    <div class="font-serif-tc font-black text-sm sm:text-base mt-1">${r.name}</div>
+                    <div class="text-[11px] font-bold text-[#B23E2E]">★ ${r.passiveTitle}：${r.passiveDesc}</div>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- 步驟二：再挑選 2 樣物資 -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-serif-tc font-black text-sm sm:text-base text-[#241C15]">
+                ② 從倉庫再挑選 2 樣物資出發（已選 ${state.prologueSelectedExtras.length}/2）
+              </span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              ${Object.values(ITEMS_DB).map(item => {
+                const isPicked = state.prologueSelectedExtras.includes(item.id);
+                return `
+                  <button onclick="togglePrologueExtra('${item.id}')" class="wood-btn p-2 rounded-xl text-left flex flex-col justify-between ${
+                    isPicked ? 'bg-[#2E6F82] text-white' : 'bg-[#FAF4E6] hover:bg-[#EFE4C8]'
+                  }">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xl">${item.icon}</span>
+                      <span class="text-[10px] font-black px-1.5 py-0.2 rounded ${isPicked ? 'bg-[#D69622] text-[#241C15]' : 'bg-[#EFE4C8] text-[#241C15]'}">
+                        ${isPicked ? '✓ 已裝袋' : '+ 挑選'}
+                      </span>
+                    </div>
+                    <div class="font-black text-xs sm:text-sm mt-1">${item.name}</div>
+                    <div class="text-[10px] ${isPicked ? 'text-[#F4ECD6]' : 'text-[#643F24]'}">${item.short}</div>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- 出發按鈕 -->
+          <div class="flex items-center justify-between pt-1 border-t-2 border-dashed border-[#C7B89E]">
+            <span class="text-xs font-bold text-[#643F24]">共攜帶 ${state.inventory.length} 樣物資，準備橫渡黑水溝！</span>
+            <button onclick="confirmDeparture()" ${canDepart ? '' : 'disabled'} class="wood-btn bg-[#B23E2E] text-[#FAF4E6] font-serif-tc font-black text-base sm:text-lg px-6 py-2.5 rounded-xl">
+              ⛵ 揚帆起航！
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 事件卡抉擇畫面（含顯眼的「📜 歷史背景錦囊」老師解說／閱讀補血按鈕）
+    function renderEventScreen(container) {
+      const currentAct = ACTS_DATA[state.actIndex];
+      const ev = currentAct.events[state.eventIndex];
+      const hasReadKnowledge = state.readKnowledgeIds.includes(ev.id);
+
+      state.sceneFlags.isStorm = (ev.id === 'e2_3');
+      state.sceneFlags.isPlague = (ev.id === 'e2_4');
+      state.sceneFlags.isDrought = (ev.id === 'e3_3');
+      updateSceneStatusUI();
+
+      const renderChoiceBtn = (side, choiceObj) => {
+        const hasReq = choiceObj.reqItem ? state.inventory.includes(choiceObj.reqItem) : false;
+        const btnLabel = choiceObj.reqItem
+          ? (hasReq ? choiceObj.labelWithItem : choiceObj.labelNoItem)
+          : choiceObj.label;
+
+        const isGoldHighlight = choiceObj.reqItem && hasReq;
+        const tagText = side === 'left' ? '👈 左側抉擇' : '👉 右側抉擇';
+
+        return `
+          <button onclick="handleEventChoice('${side}')" class="wood-btn p-3 sm:p-3.5 rounded-xl text-left flex flex-col justify-between gap-1.5 ${
+            isGoldHighlight
+              ? 'bg-[#FFF6D6] border-[#B23E2E] ring-2 ring-[#D69622]'
+              : 'bg-[#EFE4C8] hover:bg-[#E7D8B5]'
+          }">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-[11px] font-black px-2 py-0.5 rounded bg-[#241C15] text-[#F4ECD6]">${tagText}</span>
+              ${isGoldHighlight
+                ? `<span class="text-[11px] font-black text-[#B23E2E] bg-[#D69622]/30 px-2 py-0.5 rounded-full">✨ 道具加成！</span>`
+                : (choiceObj.reqItem ? `<span class="text-[11px] font-bold text-[#7A6855]">未持有對應道具</span>` : '')
+              }
+            </div>
+            <div class="font-black text-sm sm:text-base text-[#241C15] leading-snug">${btnLabel}</div>
+          </button>
+        `;
+      };
+
+      container.innerHTML = `
+        <div class="flex-1 flex flex-col justify-between gap-2.5 card-pop">
+          <!-- 事件頂部標籤與背景小知識按鈕 -->
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-[#D8CCB0] pb-2">
+            <span class="bg-[#2E6F82] text-white text-xs font-black px-2.5 py-1 rounded-full">
+              ${currentAct.actTitle}・事件 ${state.eventIndex + 1}/${currentAct.events.length}
+            </span>
+
+            <!-- 師生背景錦囊按鈕：閱讀增加生命值 -->
+            <button onclick="openKnowledgeModal('${ev.id}')" class="wood-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1.5 ${
+              hasReadKnowledge
+                ? 'bg-[#E5F0E1] text-[#2F5922] border-[#4E7F34]'
+                : 'bg-[#FFF3CC] text-[#7A3500] border-[#241C15] knowledge-glow'
+            }">
+              <span>${hasReadKnowledge ? '📖' : '📜'}</span>
+              <span>${hasReadKnowledge ? '背景小知識（已補血 ✓）' : '背景小知識・老師解說'}</span>
+              ${hasReadKnowledge
+                ? ''
+                : '<span class="bg-[#4E7F34] text-white text-[10px] sm:text-[11px] px-1.5 py-0.2 rounded-full">+5生命</span>'
+              }
+            </button>
+          </div>
+
+          <!-- 事件插畫 Icon 與情境描述 -->
+          <div class="flex-1 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 bg-[#F4ECD6] border-2 border-[#241C15] rounded-xl p-3 sm:p-4 relative">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#D69622]/25 border-2 border-[#241C15] flex items-center justify-center text-4xl sm:text-5xl shrink-0 shadow-inner">
+              ${ev.icon}
+            </div>
+            <div class="text-center sm:text-left">
+              <h3 class="font-serif-tc font-black text-lg sm:text-xl text-[#B23E2E] mb-1">${ev.title}</h3>
+              <p class="text-sm sm:text-base font-bold text-[#241C15] leading-relaxed">${ev.desc}</p>
+              ${!hasReadKnowledge
+                ? `<p class="text-[11px] sm:text-xs font-bold text-[#4E7F34] mt-1.5">💡 先點右上角「📜 背景小知識」了解歷史脈絡，可恢復 +5 🍚糧水與 +5 ❤️民心！</p>`
+                : ''
+              }
+            </div>
+          </div>
+
+          <!-- 左／右二選一按鈕 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${renderChoiceBtn('left', ev.left)}
+            ${renderChoiceBtn('right', ev.right)}
+          </div>
+        </div>
+      `;
+    }
+
+    // 尋找事件資料（供錦囊彈窗使用）
+    function findEventById(evId) {
+      for (const act of ACTS_DATA) {
+        for (const ev of act.events) {
+          if (ev.id === evId) return ev;
+        }
+      }
+      return null;
+    }
+
+    // 開啟「歷史背景錦囊」彈窗（老師解說 / 學生閱讀）
+    function openKnowledgeModal(evId) {
+      const ev = findEventById(evId);
+      if (!ev || !ev.bgKnowledge) return;
+
+      sfx.scrollOpen();
+      state.activeKnowledgeEventId = evId;
+      const alreadyClaimed = state.readKnowledgeIds.includes(evId);
+      const kn = ev.bgKnowledge;
+
+      document.getElementById('knTitle').textContent = kn.title;
+      document.getElementById('knBody').textContent = kn.body;
+      document.getElementById('knTeacherPrompt').textContent = kn.teacherPrompt;
+
+      const kwContainer = document.getElementById('knKeywords');
+      kwContainer.innerHTML = kn.keywords.map(k =>
+        `<span class="bg-[#D69622]/25 border border-[#241C15] text-[#241C15] text-xs font-black px-2.5 py-0.5 rounded-full"># ${k}</span>`
+      ).join('');
+
+      const rewardStatus = document.getElementById('knRewardStatus');
+      const claimBtn = document.getElementById('knClaimBtn');
+
+      if (alreadyClaimed) {
+        rewardStatus.textContent = '✓ 本題背景小知識已領取過生命值獎勵（可隨時開啟供課堂解說）';
+        rewardStatus.className = 'text-xs sm:text-sm font-bold text-[#643F24]';
+        claimBtn.innerHTML = '<span>✓ 了解，返回抉擇</span>';
+        claimBtn.className = 'wood-btn bg-[#2E6F82] hover:bg-[#255d6e] text-white font-serif-tc font-black text-sm sm:text-base px-5 py-2.5 rounded-xl flex items-center gap-1.5';
+      } else {
+        rewardStatus.textContent = '✨ 閱讀完成即可恢復生命值：+5 🍚糧水、+5 ❤️民心';
+        rewardStatus.className = 'text-xs sm:text-sm font-black text-[#4E7F34]';
+        claimBtn.innerHTML = '<span>✨ 我讀懂了！恢復生命值 (+5/+5)</span>';
+        claimBtn.className = 'wood-btn bg-[#4E7F34] hover:bg-[#416c2b] text-white font-serif-tc font-black text-sm sm:text-base px-5 py-2.5 rounded-xl flex items-center gap-1.5';
+      }
+
+      document.getElementById('knowledgeModal').classList.remove('hidden');
+    }
+
+    // 確認閱讀完成並增加生命值
+    function claimKnowledgeAndClose() {
+      const evId = state.activeKnowledgeEventId;
+      document.getElementById('knowledgeModal').classList.add('hidden');
+
+      if (evId && !state.readKnowledgeIds.includes(evId)) {
+        state.readKnowledgeIds.push(evId);
+        applyStatChanges(5, 5, { isHeal: true });
+        showToast('📖 閱讀歷史錦囊成功！元氣滿滿：+5 🍚糧水、+5 ❤️民心！', 2800);
+        // 重新渲染當前事件畫面，將按鈕更新為已閱讀狀態
+        if (state.screen === 'event') {
+          renderStage();
+        }
+      } else {
+        sfx.click();
+      }
+      state.activeKnowledgeEventId = null;
+    }
+
+    function closeKnowledgeModal() {
+      sfx.click();
+      document.getElementById('knowledgeModal').classList.add('hidden');
+      state.activeKnowledgeEventId = null;
+    }
+
+    // 處理玩家事件抉擇
+    function handleEventChoice(side) {
+      const currentAct = ACTS_DATA[state.actIndex];
+      const ev = currentAct.events[state.eventIndex];
+      const choice = ev[side];
+
+      let outcome;
+      let usedItemMsg = '';
+
+      if (choice.reqItem) {
+        const hasItem = state.inventory.includes(choice.reqItem);
+        if (hasItem) {
+          outcome = { ...choice.withItemOutcome };
+          if (choice.consumeItem) {
+            consumeOneItem(choice.reqItem);
+            usedItemMsg = `（已消耗 ${ITEMS_DB[choice.reqItem].icon}${ITEMS_DB[choice.reqItem].name}）`;
+          } else {
+            usedItemMsg = `（憑藉 ${ITEMS_DB[choice.reqItem].icon}${ITEMS_DB[choice.reqItem].name}）`;
+          }
+        } else {
+          outcome = { ...choice.noItemOutcome };
+        }
+      } else {
+        outcome = { ...choice.outcome };
+      }
+
+      let foodDelta = outcome.food || 0;
+      let moraleDelta = outcome.morale || 0;
+      let passiveNote = '';
+
+      if (state.role) {
+        if (state.role.id === 'farmer' && choice.isFarming) {
+          foodDelta += 10;
+          passiveNote = '👨‍🌾 勤奮農夫天賦：糧水額外 +10！';
+        }
+        if (state.role.id === 'physician' && choice.isDisease) {
+          if (foodDelta < 0) foodDelta = Math.ceil(foodDelta / 2);
+          if (moraleDelta < 0) moraleDelta = Math.ceil(moraleDelta / 2);
+          passiveNote = '🩺 江湖郎中天賦：疾病損失減半！';
+        }
+      }
+
+      let itemGainNote = '';
+      if (outcome.gainItem) {
+        itemGainNote = addItemToBackpack(outcome.gainItem, true);
+      }
+
+      if (ev.id === 'e2_2') state.sceneFlags.canalBuilt = true;
+      if (ev.id === 'e2_4') state.sceneFlags.villageStable = true;
+      state.sceneFlags.isStorm = false;
+      state.sceneFlags.isPlague = false;
+      if (ev.id === 'e3_3' && side === 'left') state.sceneFlags.isDrought = false;
+
+      applyStatChanges(foodDelta, moraleDelta);
+
+      state.lastOutcome = {
+        evId: ev.id,
+        title: ev.title,
+        icon: ev.icon,
+        text: outcome.text + usedItemMsg,
+        foodDelta,
+        moraleDelta,
+        passiveNote,
+        itemGainNote,
+        trivia: ev.trivia
+      };
+
+      state.screen = 'result';
+      renderStage();
+    }
+
+    // 事件結算與【📜 歷史小知識】畫面
+    function renderResultScreen(container) {
+      const res = state.lastOutcome;
+      const isDead = state.food <= 0 || state.morale <= 0;
+
+      const formatBadge = (label, val) => {
+        if (val === 0) return '';
+        const pos = val > 0;
+        return `<span class="px-2.5 py-1 rounded-lg font-black text-xs sm:text-sm border-2 border-[#241C15] ${
+          pos ? 'bg-[#4E7F34] text-white' : 'bg-[#B23E2E] text-white'
+        }">${label} ${pos ? '+' + val : val}</span>`;
+      };
+
+      container.innerHTML = `
+        <div class="flex-1 flex flex-col justify-between gap-2.5 card-pop">
+          <div class="flex items-center justify-between border-b-2 border-[#D8CCB0] pb-1.5">
+            <span class="font-serif-tc font-black text-base sm:text-lg text-[#241C15]">${res.icon} ${res.title}・結果</span>
+            <div class="flex items-center gap-1.5">
+              ${formatBadge('🍚 糧水', res.foodDelta)}
+              ${formatBadge('❤️ 民心', res.moraleDelta)}
+              ${res.foodDelta === 0 && res.moraleDelta === 0 ? '<span class="text-xs font-bold text-[#643F24]">數值無增減</span>' : ''}
+            </div>
+          </div>
+
+          <div class="flex-1 flex flex-col justify-center gap-2 bg-[#F4ECD6] border-2 border-[#241C15] rounded-xl p-3 sm:p-4">
+            <p class="text-base sm:text-lg font-black text-[#241C15] leading-relaxed">${res.text}</p>
+            ${res.passiveNote ? `<div class="text-xs sm:text-sm font-black text-[#2E6F82]">★ ${res.passiveNote}</div>` : ''}
+            ${res.itemGainNote ? `<div class="text-xs sm:text-sm font-black text-[#B23E2E]">🎁 ${res.itemGainNote}</div>` : ''}
+          </div>
+
+          <!-- 精簡歷史小知識＋老師可回看詳細錦囊 -->
+          <div class="bg-[#EFE4C8] border-2 border-[#241C15] rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-bold text-[#4A3828]">${res.trivia}</span>
+            <button onclick="openKnowledgeModal('${res.evId}')" class="text-xs font-black text-[#2E6F82] underline hover:text-[#B23E2E] shrink-0">
+              📖 展開詳細解說
+            </button>
+          </div>
+
+          <div class="flex justify-end">
+            <button onclick="proceedAfterResult()" class="wood-btn ${
+              isDead ? 'bg-[#241C15] text-[#F4ECD6]' : 'bg-[#2E6F82] text-white'
+            } font-serif-tc font-black text-base sm:text-lg px-6 py-2.5 rounded-xl">
+              ${isDead ? '查看拓荒結局 ➔' : '繼續前進 ➔'}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function proceedAfterResult() {
+      sfx.click();
+      if (state.food <= 0 || state.morale <= 0) {
+        triggerEnding();
+        return;
+      }
+
+      const currentAct = ACTS_DATA[state.actIndex];
+      if (state.eventIndex + 1 < currentAct.events.length) {
+        state.eventIndex++;
+        state.screen = 'event';
+        renderStage();
+      } else {
+        state.screen = 'minigame';
+        renderStage();
+      }
+    }
+
+    /*************************************************************************
+     * 九、三個 10 秒快節奏迷你小遊戲引擎
+     *************************************************************************/
+    function renderMiniGameScreen(container) {
+      const miniType = ACTS_DATA[state.actIndex].miniGameType;
+      if (miniType === 'dodge') initMiniGameDodge(container);
+      else if (miniType === 'canal') initMiniGameCanal(container);
+      else initMiniGameDefend(container);
+    }
+
+    // 迷你小遊戲 1：【閃避黑水溝風浪】
+    function initMiniGameDodge(container) {
+      container.innerHTML = `
+        <div class="flex-1 flex flex-col justify-between gap-2 card-pop">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="bg-[#B23E2E] text-white text-xs font-black px-2 py-0.5 rounded">10秒小遊戲 ①</span>
+              <span class="font-serif-tc font-black text-sm sm:text-base ml-1">【閃避黑水溝風浪】</span>
+            </div>
+            <div class="font-black text-sm sm:text-base text-[#B23E2E] tabular-nums" id="mg1TimerText">⏱️ 10.0s</div>
+          </div>
+
+          <div class="w-full h-2.5 bg-[#D8CCB0] border-2 border-[#241C15] rounded-full overflow-hidden">
+            <div id="mg1TimeBar" class="h-full bg-[#B23E2E]" style="width:100%"></div>
+          </div>
+
+          <div class="relative flex-1 min-h-[175px] border-2 border-[#241C15] rounded-xl overflow-hidden bg-[#142F3A]">
+            <canvas id="mg1Canvas" class="w-full h-full block touch-none"></canvas>
+            <div id="mg1Feedback" class="absolute top-2 left-1/2 -translate-x-1/2 pointer-events-none font-black text-xs sm:text-sm px-3 py-1 rounded-full bg-[#FAF4E6]/95 border-2 border-[#241C15] opacity-0 transition-opacity"></div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs font-bold text-[#5A4634]">
+            <span>💡 滑鼠左右移動 / 手指拖曳 / 鍵盤 ← → 閃避暗礁大浪、撈取木箱！</span>
+            <div class="flex gap-1.5 sm:hidden">
+              <button id="mg1LeftBtn" class="wood-btn bg-[#EFE4C8] px-3 py-1 rounded font-black">◀ 左</button>
+              <button id="mg1RightBtn" class="wood-btn bg-[#EFE4C8] px-3 py-1 rounded font-black">右 ▶</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const canvas = document.getElementById('mg1Canvas');
+      const ctx = canvas.getContext('2d');
+      const timerText = document.getElementById('mg1TimerText');
+      const timeBar = document.getElementById('mg1TimeBar');
+      const fbEl = document.getElementById('mg1Feedback');
+
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = Math.max(300, rect.width);
+      canvas.height = Math.max(175, rect.height);
+      const W = canvas.width;
+      const H = canvas.height;
+
+      let boatX = W / 2;
+      const boatY = H - 32;
+      const boatR = 18;
+      let boatFlash = 0;
+
+      const obstacles = [];
+      let spawnTimer = 0;
+      let keys = { left: false, right: false };
+      let cratesCaught = 0;
+      let blockedByWood = 0;
+
+      const showMgFeedback = (msg, colorClass = 'text-[#241C15]') => {
+        fbEl.textContent = msg;
+        fbEl.className = `absolute top-2 left-1/2 -translate-x-1/2 pointer-events-none font-black text-xs sm:text-sm px-3 py-1 rounded-full bg-[#FAF4E6]/95 border-2 border-[#241C15] ${colorClass}`;
+        fbEl.style.opacity = '1';
+        clearTimeout(fbEl._t);
+        fbEl._t = setTimeout(() => { fbEl.style.opacity = '0'; }, 900);
+      };
+
+      const onPointerMove = (e) => {
+        const r = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const relX = (clientX - r.left) * (W / (r.width || 1));
+        boatX = Math.max(24, Math.min(W - 24, relX));
+      };
+      const onKeyDown = (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+        if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+      };
+      const onKeyUp = (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+        if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+      };
+
+      canvas.addEventListener('mousemove', onPointerMove);
+      canvas.addEventListener('touchmove', onPointerMove, { passive: true });
+      canvas.addEventListener('touchstart', onPointerMove, { passive: true });
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keyup', onKeyUp);
+
+      const leftBtn = document.getElementById('mg1LeftBtn');
+      const rightBtn = document.getElementById('mg1RightBtn');
+      if (leftBtn && rightBtn) {
+        leftBtn.onpointerdown = () => { keys.left = true; };
+        leftBtn.onpointerup = () => { keys.left = false; };
+        rightBtn.onpointerdown = () => { keys.right = true; };
+        rightBtn.onpointerup = () => { keys.right = false; };
+      }
+
+      const DURATION = 10000;
+      const startTime = performance.now();
+      let lastTickSec = 10;
+      let animId = null;
+      let finished = false;
+
+      const loop = (now) => {
+        if (finished) return;
+        const elapsed = now - startTime;
+        const remain = Math.max(0, DURATION - elapsed);
+        const secLeft = Math.ceil(remain / 1000);
+
+        timerText.textContent = `⏱️ ${(remain / 1000).toFixed(1)}s`;
+        timeBar.style.width = `${(remain / DURATION) * 100}%`;
+
+        if (secLeft <= 3 && secLeft < lastTickSec && secLeft > 0) sfx.tick();
+        lastTickSec = secLeft;
+
+        if (keys.left) boatX = Math.max(24, boatX - 5.5);
+        if (keys.right) boatX = Math.min(W - 24, boatX + 5.5);
+
+        spawnTimer++;
+        if (spawnTimer % 18 === 0) {
+          const rand = Math.random();
+          const type = rand < 0.24 ? 'crate' : (rand < 0.62 ? 'reef' : 'wave');
+          obstacles.push({
+            x: 24 + Math.random() * (W - 48),
+            y: -20,
+            r: type === 'crate' ? 15 : 17,
+            type,
+            speed: 2.8 + Math.random() * 1.8
+          });
+        }
+
+        // 繪製黑水溝海浪背景（優先使用 黑水溝海浪.png 向下捲動）
+        if (BG_ASSETS.sea.loaded && BG_ASSETS.sea.img.naturalWidth > 0) {
+          drawScrollingSeaImage(ctx, BG_ASSETS.sea.img, W, H, elapsed * 0.16);
+        } else {
+          ctx.fillStyle = '#142F3A';
+          ctx.fillRect(0, 0, W, H);
+          ctx.strokeStyle = 'rgba(168, 208, 219, 0.18)';
+          ctx.lineWidth = 2;
+          const offset = (elapsed * 0.18) % 40;
+          for (let y = offset - 40; y < H; y += 40) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
+          }
+        }
+
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+          const o = obstacles[i];
+          o.y += o.speed;
+
+          if (o.type === 'crate') {
+            ctx.fillStyle = '#D69622';
+            ctx.strokeStyle = '#FAF4E6';
+            ctx.lineWidth = 2;
+            ctx.fillRect(o.x - 12, o.y - 12, 24, 24);
+            ctx.strokeRect(o.x - 12, o.y - 12, 24, 24);
+            ctx.font = '15px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('📦', o.x, o.y);
+          } else if (o.type === 'reef') {
+            ctx.fillStyle = '#4A3B32';
+            ctx.strokeStyle = '#FAF4E6';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(o.x, o.y - 16);
+            ctx.lineTo(o.x + 16, o.y + 12);
+            ctx.lineTo(o.x - 16, o.y + 12);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+          } else {
+            ctx.font = '24px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🌊', o.x, o.y);
+          }
+
+          const dist = Math.hypot(o.x - boatX, o.y - boatY);
+          if (dist < o.r + boatR - 3) {
+            obstacles.splice(i, 1);
+            if (o.type === 'crate') {
+              cratesCaught++;
+              applyStatChanges(5, 0);
+              showMgFeedback('📦 撈到物資箱！+5 🍚糧水', 'text-[#4E7F34]');
+            } else {
+              boatFlash = 14;
+              if (consumeOneItem('wood')) {
+                blockedByWood++;
+                sfx.shield();
+                triggerScreenEffect('shield');
+                showMgFeedback('🧱 建材修補成功！抵銷風浪傷害！', 'text-[#2E6F82]');
+              } else {
+                applyStatChanges(-8, 0);
+                showMgFeedback('💥 撞上風浪！-8 🍚糧水', 'text-[#B23E2E]');
+                if (state.food <= 0) {
+                  finished = true;
+                  cleanup();
+                  triggerEnding();
+                  return;
+                }
+              }
+            }
+            continue;
+          }
+
+          if (o.y > H + 30) obstacles.splice(i, 1);
+        }
+
+        ctx.save();
+        ctx.translate(boatX, boatY);
+        ctx.fillStyle = boatFlash > 0 ? (boatFlash--, '#FF3B30') : '#D69622';
+        ctx.strokeStyle = '#FAF4E6';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(0, -22);
+        ctx.lineTo(16, 14);
+        ctx.lineTo(-16, 14);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.font = '18px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('⛵', 0, 0);
+        ctx.restore();
+
+        if (remain <= 0) {
+          finished = true;
+          cleanup();
+          finishMiniGame1(cratesCaught);
+        } else {
+          animId = requestAnimationFrame(loop);
+        }
+      };
+
+      const cleanup = () => {
+        finished = true;
+        cancelAnimationFrame(animId);
+        canvas.removeEventListener('mousemove', onPointerMove);
+        canvas.removeEventListener('touchmove', onPointerMove);
+        canvas.removeEventListener('touchstart', onPointerMove);
+        window.removeEventListener('keydown', onKeyDown);
+        window.removeEventListener('keyup', onKeyUp);
+      };
+      state.activeMiniGameCleanup = cleanup;
+      animId = requestAnimationFrame(loop);
+    }
+
+    function finishMiniGame1(cratesCaught) {
+      sfx.fanfare();
+      applyStatChanges(5, 10);
+      showToast(`🎉 成功橫渡黑水溝！撈獲 ${cratesCaught} 箱物資，民心 +10！`, 2600);
+      state.actIndex = 1;
+      state.eventIndex = 0;
+      state.screen = 'event';
+      renderStage();
+    }
+
+    // 迷你小遊戲 2：【搶通水圳引水】
+    function initMiniGameCanal(container) {
+      const solutionGrid = [
+        [
+          { type: 'corner', targetRot: 0 },
+          { type: 'straight', targetRot: 1 },
+          { type: 'corner', targetRot: 2 },
+          { type: 'corner', targetRot: 0 }
+        ],
+        [
+          { type: 'straight', targetRot: 0 },
+          { type: 'corner', targetRot: 1 },
+          { type: 'corner', targetRot: 3 },
+          { type: 'straight', targetRot: 0 }
+        ],
+        [
+          { type: 'corner', targetRot: 0 },
+          { type: 'straight', targetRot: 0 },
+          { type: 'corner', targetRot: 1 },
+          { type: 'corner', targetRot: 2 }
+        ],
+        [
+          { type: 'straight', targetRot: 1 },
+          { type: 'corner', targetRot: 0 },
+          { type: 'straight', targetRot: 1 },
+          { type: 'corner', targetRot: 2 }
+        ]
+      ];
+
+      const tiles = [];
+      for (let r = 0; r < 4; r++) {
+        tiles[r] = [];
+        for (let c = 0; c < 4; c++) {
+          const base = solutionGrid[r][c];
+          let rot = (base.targetRot + 1 + Math.floor(Math.random() * 3)) % 4;
+          if (base.type === 'straight' && rot % 2 === base.targetRot % 2) {
+            rot = (rot + 1) % 4;
+          }
+          tiles[r][c] = { type: base.type, rot, wet: false };
+        }
+      }
+
+      container.innerHTML = `
+        <div class="flex-1 flex flex-col justify-between gap-2 card-pop">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="bg-[#2E6F82] text-white text-xs font-black px-2 py-0.5 rounded">10秒小遊戲 ②</span>
+              <span class="font-serif-tc font-black text-sm sm:text-base ml-1">【搶通水圳引水】</span>
+            </div>
+            <div class="font-black text-sm sm:text-base text-[#2E6F82] tabular-nums" id="mg2TimerText">⏱️ 10.0s</div>
+          </div>
+
+          <div class="w-full h-2.5 bg-[#D8CCB0] border-2 border-[#241C15] rounded-full overflow-hidden">
+            <div id="mg2TimeBar" class="h-full bg-[#2E6F82]" style="width:100%"></div>
+          </div>
+
+          <div class="flex-1 flex flex-col items-center justify-center bg-[#EFE4C8] border-2 border-[#241C15] rounded-xl p-2 relative">
+            <div class="w-full max-w-[260px] flex justify-between text-xs font-black mb-1">
+              <span class="text-[#2E6F82]">⛰️ 山泉水源 ⬇</span>
+              <span class="text-[#643F24]">點擊方塊旋轉渠道</span>
+            </div>
+
+            <div id="canalGrid" class="grid grid-cols-4 gap-1.5 w-full max-w-[250px] aspect-square bg-[#643F24] p-1.5 rounded-xl border-2 border-[#241C15]">
+            </div>
+
+            <div class="w-full max-w-[260px] flex justify-end text-xs font-black mt-1">
+              <span id="paddyTargetLabel" class="text-[#8C5A3C]">⬇ 🌾 乾涸稻田</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const gridEl = document.getElementById('canalGrid');
+      const timerText = document.getElementById('mg2TimerText');
+      const timeBar = document.getElementById('mg2TimeBar');
+      const paddyLabel = document.getElementById('paddyTargetLabel');
+
+      const getOpenings = (tile) => {
+        if (tile.type === 'straight') {
+          return tile.rot % 2 === 0 ? [0, 2] : [1, 3];
+        } else {
+          return [tile.rot % 4, (tile.rot + 1) % 4];
+        }
+      };
+
+      const checkWaterFlow = () => {
+        for (let r = 0; r < 4; r++) {
+          for (let c = 0; c < 4; c++) tiles[r][c].wet = false;
+        }
+        if (!getOpenings(tiles[0][0]).includes(0)) return false;
+
+        const queue = [[0, 0]];
+        tiles[0][0].wet = true;
+        const dr = [-1, 0, 1, 0];
+        const dc = [0, 1, 0, -1];
+        const opp = [2, 3, 0, 1];
+
+        while (queue.length > 0) {
+          const [r, c] = queue.shift();
+          const ops = getOpenings(tiles[r][c]);
+          for (const dir of ops) {
+            const nr = r + dr[dir];
+            const nc = c + dc[dir];
+            if (nr >= 0 && nr < 4 && nc >= 0 && nc < 4 && !tiles[nr][nc].wet) {
+              if (getOpenings(tiles[nr][nc]).includes(opp[dir])) {
+                tiles[nr][nc].wet = true;
+                queue.push([nr, nc]);
+              }
+            }
+          }
+        }
+        return tiles[3][3].wet && getOpenings(tiles[3][3]).includes(2);
+      };
+
+      let solved = false;
+      let finished = false;
+      let animId = null;
+
+      const renderGrid = () => {
+        const connected = checkWaterFlow();
+        gridEl.innerHTML = '';
+
+        for (let r = 0; r < 4; r++) {
+          for (let c = 0; c < 4; c++) {
+            const t = tiles[r][c];
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `rounded-lg border-2 border-[#241C15] flex items-center justify-center transition-colors ${
+              t.wet ? 'bg-[#D6EEF5]' : 'bg-[#E8DEC3] hover:bg-[#F4ECD6]'
+            }`;
+            const pipeColor = t.wet ? '#2E6F82' : '#8C7A65';
+            const svgPath = t.type === 'straight'
+              ? `<rect x="36" y="0" width="28" height="100" fill="${pipeColor}" />`
+              : `<path d="M36 0 H64 V36 H100 V64 H36 Z" fill="${pipeColor}" />`;
+
+            btn.innerHTML = `
+              <svg viewBox="0 0 100 100" class="w-full h-full pipe-svg" style="transform: rotate(${t.rot * 90}deg)">
+                ${svgPath}
+              </svg>
+            `;
+            btn.onclick = () => {
+              if (finished) return;
+              sfx.click();
+              t.rot = (t.rot + 1) % 4;
+              renderGrid();
+            };
+            gridEl.appendChild(btn);
+          }
+        }
+
+        if (connected && !solved) {
+          solved = true;
+          paddyLabel.textContent = '⬇ 🌾 稻田灌滿綠油油！';
+          paddyLabel.className = 'text-[#4E7F34] font-black animate-bounce';
+          state.sceneFlags.canalBuilt = true;
+          setTimeout(() => {
+            if (!finished) {
+              finished = true;
+              cleanup();
+              finishMiniGame2(true);
+            }
+          }, 420);
+        }
+      };
+
+      const DURATION = 10000;
+      const startTime = performance.now();
+      let lastTickSec = 10;
+
+      const loop = (now) => {
+        if (finished) return;
+        const elapsed = now - startTime;
+        const remain = Math.max(0, DURATION - elapsed);
+        const secLeft = Math.ceil(remain / 1000);
+
+        timerText.textContent = `⏱️ ${(remain / 1000).toFixed(1)}s`;
+        timeBar.style.width = `${(remain / DURATION) * 100}%`;
+
+        if (secLeft <= 3 && secLeft < lastTickSec && secLeft > 0) sfx.tick();
+        lastTickSec = secLeft;
+
+        if (remain <= 0) {
+          finished = true;
+          cleanup();
+          finishMiniGame2(solved);
+        } else {
+          animId = requestAnimationFrame(loop);
+        }
+      };
+
+      const cleanup = () => {
+        finished = true;
+        cancelAnimationFrame(animId);
+      };
+      state.activeMiniGameCleanup = cleanup;
+      renderGrid();
+      animId = requestAnimationFrame(loop);
+    }
+
+    function finishMiniGame2(success) {
+      state.sceneFlags.canalBuilt = true;
+      if (success) {
+        sfx.fanfare();
+        applyStatChanges(25, 15);
+        showToast('🌊 水圳全線貫通！稻田瞬間轉綠：+25 🍚糧水、+15 ❤️民心！', 2800);
+      } else {
+        applyStatChanges(5, -5);
+        showToast('⏳ 時間到！水圳勉強引水成功，獲得 +5 🍚糧水、-5 ❤️民心。', 2600);
+      }
+
+      if (state.food <= 0 || state.morale <= 0) {
+        triggerEnding();
+        return;
+      }
+
+      state.actIndex = 2;
+      state.eventIndex = 0;
+      state.screen = 'event';
+      renderStage();
+    }
+
+    // 迷你小遊戲 3：【守護聚落大作戰】
+    function initMiniGameDefend(container) {
+      const buildings = [
+        { id: 0, name: '草寮', baseIcon: '🛖' },
+        { id: 1, name: '穀倉', baseIcon: '🌾' },
+        { id: 2, name: '水車', baseIcon: '⚙️' },
+        { id: 3, name: '土角厝', baseIcon: '🏠' },
+        { id: 4, name: '竹圍牆', baseIcon: '🎋' },
+        { id: 5, name: '土地公廟', baseIcon: '🏮' }
+      ];
+
+      const hazards = new Array(6).fill(null);
+      let clearedCount = 0;
+
+      container.innerHTML = `
+        <div class="flex-1 flex flex-col justify-between gap-2 card-pop">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="bg-[#D69622] text-[#241C15] border border-[#241C15] text-xs font-black px-2 py-0.5 rounded">10秒小遊戲 ③</span>
+              <span class="font-serif-tc font-black text-sm sm:text-base ml-1">【守護聚落大作戰】</span>
+            </div>
+            <div class="font-black text-sm sm:text-base text-[#B23E2E] tabular-nums" id="mg3TimerText">⏱️ 10.0s</div>
+          </div>
+
+          <div class="w-full h-2.5 bg-[#D8CCB0] border-2 border-[#241C15] rounded-full overflow-hidden">
+            <div id="mg3TimeBar" class="h-full bg-[#D69622]" style="width:100%"></div>
+          </div>
+
+          <div id="defendGrid" class="flex-1 grid grid-cols-3 gap-2 bg-[#EFE4C8] border-2 border-[#241C15] rounded-xl p-2.5">
+            ${buildings.map(b => `
+              <button type="button" id="bldg_${b.id}" onclick="tapVillageHazard(${b.id})" class="wood-btn bg-[#FAF4E6] rounded-xl p-2 flex flex-col items-center justify-center relative overflow-hidden">
+                <span id="bldgIcon_${b.id}" class="text-3xl sm:text-4xl transition-transform">${b.baseIcon}</span>
+                <span id="bldgLabel_${b.id}" class="text-xs font-black mt-1 text-[#241C15]">${b.name}</span>
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="text-xs font-bold text-[#5A4634] text-center">
+            ⚡ 狂風火星來襲！快速點擊冒出的 <span class="text-[#B23E2E] font-black">🔥 火苗</span> 滅火與 <span class="text-[#643F24] font-black">🪵 破損竹圍</span> 搶修！
+          </div>
+        </div>
+      `;
+
+      const timerText = document.getElementById('mg3TimerText');
+      const timeBar = document.getElementById('mg3TimeBar');
+
+      const updateBuildingUI = (idx) => {
+        const btn = document.getElementById(`bldg_${idx}`);
+        const iconEl = document.getElementById(`bldgIcon_${idx}`);
+        const lblEl = document.getElementById(`bldgLabel_${idx}`);
+        if (!btn) return;
+        const h = hazards[idx];
+        if (!h) {
+          btn.className = 'wood-btn bg-[#FAF4E6] rounded-xl p-2 flex flex-col items-center justify-center relative';
+          iconEl.textContent = buildings[idx].baseIcon;
+          lblEl.textContent = buildings[idx].name;
+          lblEl.className = 'text-xs font-black mt-1 text-[#241C15]';
+        } else if (h.type === 'fire') {
+          btn.className = 'wood-btn bg-[#FFD8D2] border-[#B23E2E] rounded-xl p-2 flex flex-col items-center justify-center relative animate-pulse';
+          iconEl.textContent = '🔥';
+          lblEl.textContent = '快點滅火！';
+          lblEl.className = 'text-xs font-black mt-1 text-[#B23E2E]';
+        } else {
+          btn.className = 'wood-btn bg-[#FBE7C6] border-[#D69622] rounded-xl p-2 flex flex-col items-center justify-center relative animate-pulse';
+          iconEl.textContent = '🪵';
+          lblEl.textContent = '快點修牆！';
+          lblEl.className = 'text-xs font-black mt-1 text-[#643F24]';
+        }
+      };
+
+      window.tapVillageHazard = (idx) => {
+        if (finished) return;
+        const h = hazards[idx];
+        if (!h) {
+          sfx.click();
+          return;
+        }
+        hazards[idx] = null;
+        clearedCount++;
+        sfx.splash();
+        updateBuildingUI(idx);
+        applyStatChanges(0, 2, { silent: true });
+      };
+
+      const DURATION = 10000;
+      const startTime = performance.now();
+      let lastTickSec = 10;
+      let spawnAccum = 0;
+      let prevTime = startTime;
+      let animId = null;
+      let finished = false;
+
+      const loop = (now) => {
+        if (finished) return;
+        const dt = now - prevTime;
+        prevTime = now;
+        const elapsed = now - startTime;
+        const remain = Math.max(0, DURATION - elapsed);
+        const secLeft = Math.ceil(remain / 1000);
+
+        timerText.textContent = `⏱️ ${(remain / 1000).toFixed(1)}s`;
+        timeBar.style.width = `${(remain / DURATION) * 100}%`;
+
+        if (secLeft <= 3 && secLeft < lastTickSec && secLeft > 0) sfx.tick();
+        lastTickSec = secLeft;
+
+        spawnAccum += dt;
+        if (spawnAccum > 780) {
+          spawnAccum = 0;
+          const freeIndices = hazards.map((h, i) => (h === null ? i : -1)).filter(i => i !== -1);
+          if (freeIndices.length > 0) {
+            const pick = freeIndices[Math.floor(Math.random() * freeIndices.length)];
+            hazards[pick] = {
+              type: Math.random() < 0.55 ? 'fire' : 'fence',
+              ttl: 2300
+            };
+            updateBuildingUI(pick);
+          }
+        }
+
+        for (let i = 0; i < 6; i++) {
+          if (hazards[i]) {
+            hazards[i].ttl -= dt;
+            if (hazards[i].ttl <= 0) {
+              hazards[i] = null;
+              updateBuildingUI(i);
+              if (consumeOneItem('wood')) {
+                sfx.shield();
+                showToast('🧱 木石建材自動緊急加固！擋下損失！', 1100);
+              } else {
+                applyStatChanges(0, -6);
+                if (state.morale <= 0) {
+                  finished = true;
+                  cleanup();
+                  triggerEnding();
+                  return;
+                }
+              }
+            }
+          }
+        }
+
+        if (remain <= 0) {
+          finished = true;
+          cleanup();
+          finishMiniGame3(clearedCount);
+        } else {
+          animId = requestAnimationFrame(loop);
+        }
+      };
+
+      const cleanup = () => {
+        finished = true;
+        cancelAnimationFrame(animId);
+        delete window.tapVillageHazard;
+      };
+      state.activeMiniGameCleanup = cleanup;
+      animId = requestAnimationFrame(loop);
+    }
+
+    function finishMiniGame3(clearedCount) {
+      if (state.food <= 0 || state.morale <= 0) {
+        triggerEnding();
+        return;
+      }
+      sfx.fanfare();
+      applyStatChanges(5, 8);
+      showToast(`🏮 庄頭守衛成功！撲滅 ${clearedCount} 處危機，準備迎接最終結局！`, 2600);
+      triggerEnding();
+    }
+
+    /*************************************************************************
+     * 十、結局判定、圖鑑系統與教學指引彈窗
+     *************************************************************************/
+    function evaluateEnding() {
+      if (state.food <= 0) {
+        if (state.actIndex === 0) return ENDINGS_DB.find(e => e.id === 'fail_sea_food');
+        if (state.actIndex === 1) return ENDINGS_DB.find(e => e.id === 'fail_land_food');
+        return ENDINGS_DB.find(e => e.id === 'fail_village_food');
+      }
+      if (state.morale <= 0) {
+        if (state.actIndex === 0) return ENDINGS_DB.find(e => e.id === 'fail_sea_morale');
+        if (state.actIndex === 1) return ENDINGS_DB.find(e => e.id === 'fail_land_morale');
+        return ENDINGS_DB.find(e => e.id === 'fail_village_morale');
+      }
+
+      if (state.food >= 75 && state.morale >= 75) return ENDINGS_DB.find(e => e.id === 'win_legend');
+      if (state.food >= 80) return ENDINGS_DB.find(e => e.id === 'win_engineer');
+      if (state.morale >= 80) return ENDINGS_DB.find(e => e.id === 'win_harmony');
+      return ENDINGS_DB.find(e => e.id === 'win_pioneer');
+    }
+
+    function triggerEnding() {
+      const ending = evaluateEnding();
+      const isNew = saveUnlockedEnding(ending.id);
+      state.currentEnding = { ...ending, isNew };
+      state.screen = 'ending';
+
+      if (ending.type === 'win') sfx.fanfare();
+      else sfx.gameover();
+      renderStage();
+    }
+
+    function renderEndingScreen(container) {
+      const end = state.currentEnding;
+      const isWin = end.type === 'win';
+
+      container.innerHTML = `
+        <div class="flex-1 flex flex-col justify-between gap-3 card-pop text-center">
+          <div class="flex items-center justify-center gap-2 pt-1">
+            <span class="px-3 py-0.5 rounded-full text-xs font-black border-2 border-[#241C15] ${
+              isWin ? 'bg-[#D69622] text-[#241C15]' : 'bg-[#241C15] text-[#F4ECD6]'
+            }">
+              ${isWin ? '🎉 拓荒成功結局' : '💀 拓荒失敗結局'}
+            </span>
+            ${end.isNew ? '<span class="seal-stamp px-2 py-0.5 text-xs rounded animate-bounce">★ 新解鎖圖鑑！</span>' : ''}
+          </div>
+
+          <div class="flex-1 flex flex-col items-center justify-center bg-[#F4ECD6] border-2 border-[#241C15] rounded-xl p-3 sm:p-4 gap-2">
+            <div class="text-5xl sm:text-6xl">${end.icon}</div>
+            <h2 class="font-serif-tc font-black text-2xl sm:text-3xl ${isWin ? 'text-[#B23E2E]' : 'text-[#241C15]'}">
+              《${end.title}》
+            </h2>
+            <p class="text-xs sm:text-sm md:text-base font-bold text-[#4A3828] max-w-lg leading-relaxed">
+              ${end.desc}
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-2 mt-1 text-xs font-black">
+              <span class="bg-[#EFE4C8] border border-[#241C15] px-2.5 py-1 rounded-lg">最終糧水：${state.food}</span>
+              <span class="bg-[#EFE4C8] border border-[#241C15] px-2.5 py-1 rounded-lg">最終民心：${state.morale}</span>
+              <span class="bg-[#EFE4C8] border border-[#241C15] px-2.5 py-1 rounded-lg">已讀錦囊：${state.readKnowledgeIds.length} 篇</span>
+              <span class="bg-[#EFE4C8] border border-[#241C15] px-2.5 py-1 rounded-lg">圖鑑：${state.unlockedEndings.length}/${ENDINGS_DB.length}</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <button onclick="quickRestart()" class="wood-btn bg-[#B23E2E] hover:bg-[#9c3426] text-[#FAF4E6] font-serif-tc font-black text-base sm:text-lg px-6 py-2.5 rounded-xl flex items-center gap-1.5">
+              <span>🔄 3秒一鍵快速重開</span>
+            </button>
+            <button onclick="openEncyclopedia()" class="wood-btn bg-[#D69622] hover:bg-[#c2871c] text-[#241C15] font-black text-sm sm:text-base px-5 py-2.5 rounded-xl flex items-center gap-1.5">
+              <span>📖 歷史結局圖鑑</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function quickRestart() {
+      sfx.click();
+      startPrologue();
+      showToast('🔄 已開啟全新拓荒旅程！', 1500);
+    }
+
+    function openEncyclopedia() {
+      sfx.click();
+      const modal = document.getElementById('encyclopediaModal');
+      const grid = document.getElementById('encyclopediaGrid');
+      const stats = document.getElementById('modalUnlockStats');
+
+      stats.textContent = `已收集 ${state.unlockedEndings.length} / ${ENDINGS_DB.length}`;
+      grid.innerHTML = ENDINGS_DB.map(e => {
+        const unlocked = state.unlockedEndings.includes(e.id);
+        if (unlocked) {
+          const isWin = e.type === 'win';
+          return `
+            <div class="woodblock-box-sm p-3 flex gap-3 items-start ${isWin ? 'bg-[#FFF9E6]' : 'bg-[#FAF4E6]'}">
+              <div class="text-3xl shrink-0">${e.icon}</div>
+              <div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-serif-tc font-black text-sm sm:text-base text-[#241C15]">${e.title}</span>
+                  <span class="text-[10px] font-black px-1.5 py-0.2 rounded ${isWin ? 'bg-[#4E7F34] text-white' : 'bg-[#B23E2E] text-white'}">
+                    ${isWin ? '成功' : '失敗'}
+                  </span>
+                </div>
+                <p class="text-xs text-[#5A4634] mt-1 leading-relaxed">${e.desc}</p>
+              </div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="border-2 border-dashed border-[#9C8B74] bg-[#E8DEC3]/60 rounded-xl p-3 flex gap-3 items-center opacity-75">
+              <div class="w-10 h-10 rounded-lg bg-[#241C15]/15 flex items-center justify-center text-xl font-black text-[#643F24] shrink-0">？</div>
+              <div>
+                <div class="font-serif-tc font-black text-sm text-[#643F24]">尚未解鎖的歷史結局</div>
+                <div class="text-xs font-bold text-[#8C7A65] mt-0.5">線索：${e.conditionHint}</div>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeEncyclopedia() {
+      sfx.click();
+      document.getElementById('encyclopediaModal').classList.add('hidden');
+    }
+
+    function openTeacherGuide() {
+      sfx.scrollOpen();
+      document.getElementById('guideModal').classList.remove('hidden');
+    }
+
+    function closeTeacherGuide() {
+      sfx.click();
+      document.getElementById('guideModal').classList.add('hidden');
+    }
+
+    function toggleMute() {
+      sfx.toggleMute();
+    }
+
+    // 鍵盤快捷鍵支援（確認沒有任何彈窗開啟才觸發）
+    window.addEventListener('keydown', (e) => {
+      const anyModalOpen =
+        !document.getElementById('knowledgeModal').classList.contains('hidden') ||
+        !document.getElementById('encyclopediaModal').classList.contains('hidden') ||
+        !document.getElementById('guideModal').classList.contains('hidden');
+
+      if (anyModalOpen) {
+        if (e.key === 'Escape') {
+          closeKnowledgeModal();
+          closeEncyclopedia();
+          closeTeacherGuide();
+        }
+        return;
+      }
+
+      if (state.screen === 'result' && (e.key === ' ' || e.key === 'Enter')) {
+        e.preventDefault();
+        proceedAfterResult();
+      }
+    });
+
+    /*************************************************************************
+     * 十一、啟動雙場景渲染器與遊戲
+     *************************************************************************/
+    window.onload = () => {
+      initBackgroundAssets();
+      updateUnlockBadge();
+      titleRenderer = new TitleSceneRenderer('titleBgCanvas');
+      titleRenderer.draw();
+
+      sceneRenderer = new SceneRenderer('sceneCanvas');
+      sceneRenderer.updateAndDraw();
+
+      renderStage();
+    };
+  </script>
+</body>
+</html>
